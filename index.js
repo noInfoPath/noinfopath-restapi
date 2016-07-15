@@ -1,60 +1,149 @@
-var restify = require("restify"),
+var config = require("./config"),
+	restify = require("restify"),
 	MongoClient = require('mongodb').MongoClient,
-	Promise = require('es6-promise').Promise,
-	url = "gitlab.img.local/NoInfoPath_AppStore";
+	parser = require("odata-parser"),
+	querystring = require('querystring'),
+	createFilter = require('odata-v4-mongodb').createFilter,
+	CRUD = {},
+	CREATE = "create",
+	READ = "read",
+	UPDATE = "update",
+	DELETE = "delete";
 
-function respond(req, res, next) {
-  res.send('hello ' + req.params.name);
-  next();
+function _read(collection, data, filter) {
+	console.log(filter);
+	return collection.find(filter).toArray();
+}
+CRUD[READ] = _read;
+
+function _insertDocument(collection, data) {
+	return collection.insertOne(data);
+}
+CRUD[CREATE] = _insertDocument;
+
+function _updateDocument(collection, data, filter){
+	// var filter = {};
+	//
+	// filter[config.schema[collection]] = id;
+
+	return collection(collection).update(filter, data);
+
+}
+CRUD[UPDATE] = _updateDocument;
+
+function beginMongoTransaction(type, dbName, collectionName, data, filter) {
+	var _db;
+
+	function executeTransaction(type, data, filter, collection) {
+		//console.log(data, id, collection);
+
+		return CRUD[type](collection, data, filter);
+	}
+
+	function resolveCollection(collectionName, db) {
+		_db = db;
+
+		return db.collection(collectionName);
+	}
+
+	return new Promise(function(dbName, resolve, reject) {
+
+		MongoClient.connect(config.mongo[dbName])
+			.then(resolveCollection.bind(null, collectionName))
+			.then(executeTransaction.bind(null, type, data, filter))
+			.then(resolve)
+			.catch(reject);
+	}.bind(null, dbName));
+
+
 }
 
 var server = restify.createServer();
-server.get('/hello/:name', respond);
-server.head('/hello/:name', respond);
 
-server.listen(4001, function() {
+server.use(restify.queryParser());
+
+
+// server.use(function(req, res, next){
+// 	var raw = querystring.unescape(req.query()),
+// 		ast = parser.parse(raw);
+//
+// 	req.filter  = ast;
+//
+// 	next();
+// });
+
+server.use(restify.bodyParser());
+
+server.use(function(req, res, next){
+	//console.log(req.query);
+	//console.log(req.params, req.body, req.query);
+	//console.log(req.body);
+	if(!!req.body) req.data = JSON.parse(req.body);
+
+	next();
+});
+
+server.listen(config.server.port, function() {
   console.log('%s listening at %s', server.name, server.url);
 });
 
-server.get("/:id", function(req, res, next, obj){
-	res.send("Get");
+server.get("/AppConfig", function(req, res, next){
+	// res.send(READ);
+	var filter = createFilter(req.query.$filter);
+
+	beginMongoTransaction(READ, "NoInfoPath_AppStore", "AppConfigs", null, filter)
+		.then(function(results){
+			//console.log(results);
+			res.send(200, results);
+		})
+		.catch(function(err){
+			console.error(err);
+			res.send(500);
+		});
 });
 
-server.head("/:id", function(req, res, next){
-	res.send("Head");
+server.get("/AppConfig/:id", function(req, res, next){
+	var filter = {};
+
+	filter[config.schema.AppConfigs.pk] = req.params.id;
+
+	beginMongoTransaction(READ, "NoInfoPath_AppStore", "AppConfigs", null, filter)
+		.then(function(results){
+			if(results.length > 0){
+				res.send(200, results[0]);
+			} else {
+				res.send(404);			
+			}
+
+		})
+		.catch(function(err){
+			console.error(err);
+			res.send(500);
+		});
 });
 
-server.put("/:id", function(req, res, next, obj){
-	res.send("put");
+server.put("AppConfig/:id", function(req, res, next, obj){
+	beginMongoTransaction(UPDATE, "NoInfoPath_AppStore", "AppConfigs", req.body, req.id)
+		.then(function(results){
+			res.send(200);
+		})
+		.catch(function(err){
+			console.error(err);
+			res.send(500);
+		});
 });
 
-server.post("/", function(req, res, next, obj){
-	//console.log(req);
-	//console.log(next);
-	//console.log(obj);
-	res.send(200);
-
-	//NEXT THING TO DO IS FIND OUT WHERE IN THE REQ IS THE DATA
-
-	// MongoClient.connect(url)
-	// 	.then(function(db) {
-	// 		db.collection("changes").insertOne(obj)
-	// 			.then(function(){
-	// 				res.send(200);
-	// 			})
-	// 			.catch(function(err){
-	// 				console.err("Failed to insert");
-	// 				res.send(500);
-	// 			})
-	// 			.finally(function() {
-	// 				db.close();
-	// 				console.log("markTransactionProcessed::dbclosed");
-	// 			});
-	// 	})
-	// 	.catch(reject);
+server.post("AppConfig", function(req, res, next, obj){
+	beginMongoTransaction(CREATE, "NoInfoPath_AppStore", "AppConfigs", req.data)
+		.then(function(results){
+			res.send(200);
+		})
+		.catch(function(err){
+			console.error(err);
+			res.send(500);
+		});
 });
 
-
-server.del("/:id", function(req, res, next){
-	res.send("Del");
+server.del("AppConfig/:id", function(req, res, next){
+	res.send(DELETE);
 });
