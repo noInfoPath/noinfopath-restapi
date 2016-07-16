@@ -10,26 +10,26 @@ var config = require("./config"),
 	UPDATE = "update",
 	DELETE = "delete";
 
-function _read(collection, data, filter) {
+function _readDocument(collection, data, filter) {
 	console.log(filter);
 	return collection.find(filter).toArray();
 }
-CRUD[READ] = _read;
+CRUD[READ] = _readDocument;
 
-function _insertDocument(collection, data) {
+function _insertDocument(collection, data, filter) {
 	return collection.insertOne(data);
 }
 CRUD[CREATE] = _insertDocument;
 
 function _updateDocument(collection, data, filter){
-	// var filter = {};
-	//
-	// filter[config.schema[collection]] = id;
-
 	return collection(collection).update(filter, data);
-
 }
 CRUD[UPDATE] = _updateDocument;
+
+function _deleteDocument(collection, data, filter) {
+	return collection.deleteOne(filter);
+}
+CRUD[DELETE] = _deleteDocument;
 
 function beginMongoTransaction(type, dbName, collectionName, data, filter) {
 	var _db;
@@ -47,30 +47,17 @@ function beginMongoTransaction(type, dbName, collectionName, data, filter) {
 	}
 
 	return new Promise(function(dbName, resolve, reject) {
-
 		MongoClient.connect(config.mongo[dbName])
 			.then(resolveCollection.bind(null, collectionName))
 			.then(executeTransaction.bind(null, type, data, filter))
 			.then(resolve)
 			.catch(reject);
 	}.bind(null, dbName));
-
-
 }
 
 var server = restify.createServer();
 
 server.use(restify.queryParser());
-
-
-// server.use(function(req, res, next){
-// 	var raw = querystring.unescape(req.query()),
-// 		ast = parser.parse(raw);
-//
-// 	req.filter  = ast;
-//
-// 	next();
-// });
 
 server.use(restify.bodyParser());
 
@@ -88,12 +75,10 @@ server.listen(config.server.port, function() {
 });
 
 server.get("/AppConfig", function(req, res, next){
-	// res.send(READ);
 	var filter = createFilter(req.query.$filter);
 
 	beginMongoTransaction(READ, "NoInfoPath_AppStore", "AppConfigs", null, filter)
 		.then(function(results){
-			//console.log(results);
 			res.send(200, results);
 		})
 		.catch(function(err){
@@ -112,7 +97,7 @@ server.get("/AppConfig/:id", function(req, res, next){
 			if(results.length > 0){
 				res.send(200, results[0]);
 			} else {
-				res.send(404);			
+				res.send(404);
 			}
 
 		})
@@ -145,5 +130,12 @@ server.post("AppConfig", function(req, res, next, obj){
 });
 
 server.del("AppConfig/:id", function(req, res, next){
-	res.send(DELETE);
+	beginMongoTransaction(DELETE, "NoInfoPath_AppStore", "AppConfigs", null, req.id)
+		.then(function(results){
+			res.send(200);
+		})
+		.catch(function(err){
+			console.error(err);
+			res.send(500);
+		});
 });
