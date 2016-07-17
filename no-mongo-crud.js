@@ -39,6 +39,7 @@ function beginMongoTransaction(schema, type, data, filter) {
 	}
 
 	function resolveCollection(collectionName, db) {
+		console.info("Connection open.");
 		_db = db;
 		return db.collection(collectionName);
 	}
@@ -46,7 +47,7 @@ function beginMongoTransaction(schema, type, data, filter) {
 	function closeConnection()
 	{
 		_db.close();
-		console.log("Connection closed.");
+		console.info("Connection closed.");
 	}
 
 	return new Promise(function(resolve, reject) {

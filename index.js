@@ -3,9 +3,8 @@ var config = require("./config"),
 	crud = require("./no-mongo-crud"),
 	odataParser = require("./no-odata"),
 	schemas = require("./no-schemas")(),
-	noREST = require("./no-rest");
-
-var server = restify.createServer();
+	noREST = require("./no-rest"),
+	server = restify.createServer();
 
 server.use(restify.queryParser());
 
