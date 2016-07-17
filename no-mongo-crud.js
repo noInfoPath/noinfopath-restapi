@@ -1,10 +1,13 @@
 var config = require("./config"),
 	MongoClient = require('mongodb').MongoClient,
 	CRUD = {},
-	CREATE = "create",
-	READ = "read",
-	UPDATE = "update",
-	DELETE = "delete";
+	CRUD_OPERATIONS = {
+		"CREATE": "create",
+		"READ": "read",
+		"UPDATE": "update",
+		"DELETE": "delete"
+	}
+;
 
 function _readDocument(collection, data, filter) {
 	return collection.find(filter).toArray();
@@ -58,10 +61,5 @@ function beginMongoTransaction(schema, type, data, filter) {
 
 module.exports = {
 	execute: beginMongoTransaction,
-	operations: {
-		CREATE: CREATE,
-		READ: READ,
-		UPDATE: UPDATE,
-		DELETE: DELETE
-	}
+	operations: CRUD_OPERATIONS
 };
