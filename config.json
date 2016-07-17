@@ -1,13 +1,5 @@
 {
 	"server": {
 		"port": 4001
-	},
-	"mongo": {
-		"NoInfoPath_AppStore": "mongodb://gitlab.img.local:27017/NoInfoPath_AppStore"
-	},
-	"schema": {
-		"AppConfigs": {
-			"pk": "ID"
-		}
 	}
 }
