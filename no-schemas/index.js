@@ -2,7 +2,7 @@ var fs = require("fs"),
 	schemas = [];
 
 function _configure(){
-	var files = fs.readdirSync("./schemas"),
+	var files = fs.readdirSync("./no-schemas"),
 		tmp;
 
 	files.forEach(function(v, k){

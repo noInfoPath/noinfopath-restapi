@@ -1,8 +1,5 @@
 var config = require("./config"),
 	MongoClient = require('mongodb').MongoClient,
-	parser = require("odata-parser"),
-	querystring = require('querystring'),
-	createFilter = require('odata-v4-mongodb').createFilter,
 	CRUD = {},
 	CREATE = "create",
 	READ = "read",
