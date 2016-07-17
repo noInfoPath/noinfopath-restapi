@@ -12,7 +12,6 @@
     "es6-promise": "^3.2.1",
     "mongo": "^0.1.0",
     "mongodb": "^2.2.1",
-    "odata-parser": "^1.4.1",
     "odata-v4-mongodb": "^0.1.2",
     "restify": "^4.1.1"
   }
