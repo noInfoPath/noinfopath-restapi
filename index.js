@@ -1,4 +1,5 @@
-var restify = require("restify"),
+var config = require("./config"),
+	restify = require("restify"),
 	crud = require("./no-mongo-crud"),
 	odataParser = require("./no-odata"),
 	schemas = require("./no-schemas")(),
