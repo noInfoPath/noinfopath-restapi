@@ -1,4 +1,3 @@
-
 function _get(crud, schema, req, res, next){
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function(results){
