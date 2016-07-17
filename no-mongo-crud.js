@@ -12,22 +12,22 @@ var config = require("./config"),
 function _readDocument(collection, data, filter) {
 	return collection.find(filter).toArray();
 }
-CRUD[READ] = _readDocument;
+CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
 function _insertDocument(collection, data, filter) {
 	return collection.insertOne(data);
 }
-CRUD[CREATE] = _insertDocument;
+CRUD[CRUD_OPERATIONS.CREATE] = _insertDocument;
 
 function _updateDocument(collection, data, filter){
 	return collection.update(filter, data);
 }
-CRUD[UPDATE] = _updateDocument;
+CRUD[CRUD_OPERATIONS.UPDATE] = _updateDocument;
 
 function _deleteDocument(collection, data, filter) {
 	return collection.deleteOne(filter);
 }
-CRUD[DELETE] = _deleteDocument;
+CRUD[CRUD_OPERATIONS.DELETE] = _deleteDocument;
 
 function beginMongoTransaction(schema, type, data, filter) {
 	var _db;
