@@ -10,7 +10,7 @@ var config = require("./config"),
 ;
 
 function _readDocument(collection, data, filter) {
-	return collection.find(filter).toArray();
+	return collection.find(filter.query, filter.options).toArray();
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 

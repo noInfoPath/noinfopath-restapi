@@ -1,0 +1,6 @@
+[{
+	"mongoDbUrl": "mongodb://gitlab.img.local:27017/dtc",
+	"uri": "dtc/changes",
+	"collectionName": "changes",
+	"primaryKey": "_id"
+}]

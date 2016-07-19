@@ -1,6 +1,6 @@
 [{
 	"mongoDbUrl": "mongodb://gitlab.img.local:27017/NoInfoPath_AppStore",
-	"uri": "/AppConfig",
+	"uri": "app-store/AppConfig",
 	"collectionName": "AppConfigs",
 	"primaryKey": "ID"
 }]

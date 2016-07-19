@@ -1,4 +1,5 @@
 function _get(crud, schema, req, res, next){
+	console.log(req.odata);
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function(results){
 			if(results.length) {
@@ -67,7 +68,7 @@ function _delete(crud, schema, req, res, next){
 }
 
 function _configRoute(server, crudProvider, schema){
-	console.log("Configuring route ", schema.uri);
+	console.log("Configuring route ", schema.uri, schema);
 
 	server.get(schema.uri, _get.bind(null, crudProvider, schema));
 	server.get(schema.uri + "/:id", _getOne.bind(null, crudProvider, schema));
