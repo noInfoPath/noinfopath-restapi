@@ -3,7 +3,7 @@ var odataV4 = require("odata-v4-mongodb"),
 
 module.exports = function() {
 	return function (req, res, next){
-		console.log(req.query);
+		//console.log(req.query);
 		var query = req.query,
 			mongoq = {
 				query: {},

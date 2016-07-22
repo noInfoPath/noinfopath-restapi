@@ -29,17 +29,16 @@ function _deleteDocument(collection, data, filter) {
 }
 CRUD[CRUD_OPERATIONS.DELETE] = _deleteDocument;
 
-function beginMongoTransaction(schema, type, data, filter) {
+function MongoConnection(schema, type, data, filter) {
 	var _db;
 
 	function executeTransaction(type, data, filter, collection) {
-		//console.log(schema, type, data, filter);
-
+		console.log("executeTransaction", type);
 		return CRUD[type](collection, data, filter);
 	}
 
 	function resolveCollection(collectionName, db) {
-		console.info("Connection open.");
+		console.info("Connection open.", collectionName);
 		_db = db;
 		return db.collection(collectionName);
 	}
@@ -47,17 +46,27 @@ function beginMongoTransaction(schema, type, data, filter) {
 	function closeConnection()
 	{
 		_db.close();
-		console.info("Connection closed.");
+		console.info("Connection closed ", schema.collectionName);
 	}
 
-	return new Promise(function(resolve, reject) {
-		MongoClient.connect(schema.mongoDbUrl)
-			.then(resolveCollection.bind(null, schema.collectionName))
-			.then(executeTransaction.bind(null, type, data, filter))
-			.then(resolve)
-			.catch(reject)
-			.then(closeConnection);
-	});
+	this.run = function(){
+		return new Promise(function(resolve, reject) {
+			MongoClient.connect(schema.mongoDbUrl)
+				.then(resolveCollection.bind(null, schema.collectionName))
+				.then(executeTransaction.bind(null, type, data, filter))
+				.then(resolve)
+				.catch(reject)
+				.then(closeConnection);
+		});
+
+	};
+
+}
+
+function beginMongoTransaction(schema, type, data, filter) {
+	var mc = new MongoConnection(schema, type, data, filter);
+
+	return mc.run();
 }
 
 module.exports = {
