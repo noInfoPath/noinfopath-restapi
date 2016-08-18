@@ -11,6 +11,7 @@ module.exports = function() {
 			};
 
 		if(query.$filter) {
+			//console.log("odata: ", query.$filter);
 			mongoq.query = odataV4.createFilter(query.$filter);
 		}
 
@@ -27,6 +28,8 @@ module.exports = function() {
 		}
 
 		req.odata = mongoq;
+
+		//console.log(req.odata);
 		next();
 	};
 };

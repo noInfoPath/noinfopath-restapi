@@ -1,6 +1,9 @@
 [{
-	"mongoDbUrl": "mongodb://gitlab.img.local:27017/NoInfoPath_AppStore",
-	"uri": "app-store/AppConfig",
-	"collectionName": "AppConfigs",
-	"primaryKey": "ID"
+	"namespace": "NoInfoPath_AppStore.appConfigs",
+	"mongoDbUrl": "mongodb://macbook:27017/NoInfoPath_AppStore",
+	"uri": "NoInfoPath_AppStore/appConfigs",
+	"collectionName": "appConfigs",
+	"primaryKey": "ID",
+	"versionUri": "changes/version",
+	"changesUri": "changes"
 }]

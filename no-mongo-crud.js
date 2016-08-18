@@ -5,22 +5,57 @@ var config = require("./config"),
 		"CREATE": "create",
 		"READ": "read",
 		"UPDATE": "update",
-		"DELETE": "delete"
+		"DELETE": "delete",
+		"COUNT": "count"
 	}
 ;
 
+function _resolveData(indata) {
+	var d = indata;
+	if(typeof(d) === "string") {
+		d = JSON.parse(d);
+	}
+	return d;
+}
+
+function _countDocuments(collection, data, filter) {
+	return collection.count(filter.query, filter.options)
+		.then(function(data){
+			console.log(data);
+			return data;
+		});
+}
+CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
+
 function _readDocument(collection, data, filter) {
-	return collection.find(filter.query, filter.options).toArray();
+	return collection.find(filter.query, filter.fields, filter.options).toArray()
+		.then(function(data){
+			return data;
+		});
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
 function _insertDocument(collection, data, filter) {
-	return collection.insertOne(data);
+	var d = _resolveData(data);
+
+	return collection.insertOne(d)
+		.then(function(data){
+			return data;
+		})
+		;
 }
 CRUD[CRUD_OPERATIONS.CREATE] = _insertDocument;
 
 function _updateDocument(collection, data, filter){
-	return collection.update(filter, data);
+	//console.log("XXXXXXX", filter);
+	return collection.update(filter, _resolveData(data))
+		.then(function(data){
+			return data;
+		})
+		.catch(function(err){
+			console.error(err);
+			return err;
+		});
 }
 CRUD[CRUD_OPERATIONS.UPDATE] = _updateDocument;
 
@@ -33,7 +68,8 @@ function MongoConnection(schema, type, data, filter) {
 	var _db;
 
 	function executeTransaction(type, data, filter, collection) {
-		console.log("executeTransaction", type);
+		//console.log(arguments);
+		console.log("executeTransaction", type, filter);
 		return CRUD[type](collection, data, filter);
 	}
 
@@ -43,10 +79,9 @@ function MongoConnection(schema, type, data, filter) {
 		return db.collection(collectionName);
 	}
 
-	function closeConnection()
-	{
+	function closeConnection(){
 		_db.close();
-		console.info("Connection closed ", schema.collectionName);
+		//console.info("Connection closed ", schema.collectionName);
 	}
 
 	this.run = function(){
@@ -55,7 +90,10 @@ function MongoConnection(schema, type, data, filter) {
 				.then(resolveCollection.bind(null, schema.collectionName))
 				.then(executeTransaction.bind(null, type, data, filter))
 				.then(resolve)
-				.catch(reject)
+				.catch(function(err) {
+					console.error(err);
+					reject(err);
+				})
 				.then(closeConnection);
 		});
 

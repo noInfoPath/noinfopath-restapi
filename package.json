@@ -1,18 +1,47 @@
 {
-  "name": "noinfopath-restapi",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "es6-promise": "^3.2.1",
-    "mongo": "^0.1.0",
-    "mongodb": "^2.2.1",
-    "odata-v4-mongodb": "^0.1.2",
-    "restify": "^4.1.1"
-  }
+	"name": "noinfopath-restapi",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"@noinfopath/noinfopath-node-libraries": "^1.0.0",
+		"es6-promise": "^3.2.1",
+		"mongo": "^0.1.0",
+		"mongodb": "^2.2.1",
+		"odata-v4-mongodb": "^0.1.2",
+		"restify": "^4.1.1"
+	},
+	"logging": {
+		"name": "RESTAPI",
+		"logLevels": {
+			"none": 0,
+			"errors": 1,
+			"log": 2,
+			"warnings": 3,
+			"info": 4,
+			"debug": 5,
+			"verbose": 6
+		},
+		"bunyan": {
+			"name": "noInfoPath::restapi",
+			"streams": [{
+				"level": "info",
+				"type": "rotating-file",
+				"path": "./logs/restapi.log",
+				"period": "1d",
+				"count": 100
+			}, {
+				"level": "error",
+				"type": "rotating-file",
+				"path": "./logs/restapi_errors.log",
+				"period": "1d",
+				"count": 100
+			}]
+		}
+	}
 }
