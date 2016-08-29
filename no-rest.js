@@ -152,6 +152,8 @@ function _checkVersion(crud, schema, req, res, next) {
 }
 
 function _getChangeSet(crud, schema, req) {
+	//console.log("_getChangeSet", new Timestamp(req.params.version)); 
+
 	var clientNS = schema.namespace.split(".")[0],
 		checkSchema = {
 			"mongoDbUrl": "mongodb://macbook:27017/local",
@@ -167,8 +169,8 @@ function _getChangeSet(crud, schema, req) {
 				"ns": {
 					"$regex": clientNS
 				},
-				"v": {
-					"$gt": Number(req.params.version)
+				"ts": {
+					"$gt": new Timestamp(req.params.version)
 				}
 			},
 			fields: null,
@@ -177,6 +179,7 @@ function _getChangeSet(crud, schema, req) {
 
 	return crud.execute(checkSchema, crud.operations.READ, null, mongoq)
 		.then(function (data) {
+			console.log(data);
 			return data;
 		})
 		.catch(function (err) {
