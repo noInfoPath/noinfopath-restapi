@@ -15,33 +15,5 @@
 		"mongodb": "^2.2.1",
 		"odata-v4-mongodb": "^0.1.2",
 		"restify": "^4.1.1"
-	},
-	"logging": {
-		"name": "RESTAPI",
-		"logLevels": {
-			"none": 0,
-			"errors": 1,
-			"log": 2,
-			"warnings": 3,
-			"info": 4,
-			"debug": 5,
-			"verbose": 6
-		},
-		"bunyan": {
-			"name": "noInfoPath::restapi",
-			"streams": [{
-				"level": "info",
-				"type": "rotating-file",
-				"path": "./logs/restapi.log",
-				"period": "1d",
-				"count": 100
-			}, {
-				"level": "error",
-				"type": "rotating-file",
-				"path": "./logs/restapi_errors.log",
-				"period": "1d",
-				"count": 100
-			}]
-		}
 	}
 }
