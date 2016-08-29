@@ -4,6 +4,13 @@
 	"uri": "NoInfoPath_AppStore/appConfigs",
 	"collectionName": "appConfigs",
 	"primaryKey": "ID",
-	"versionUri": "changes/version",
+	"changesUri": "changes"
+},
+{
+	"namespace": "NoInfoPath_AppStore.tenants",
+	"mongoDbUrl": "mongodb://macbook:27017/NoInfoPath_AppStore",
+	"uri": "NoInfoPath_AppStore/tenants",
+	"collectionName": "Tenants",
+	"primaryKey": "ID",
 	"changesUri": "changes"
 }]
