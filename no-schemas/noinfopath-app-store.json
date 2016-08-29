@@ -1,6 +1,6 @@
 [{
 	"namespace": "NoInfoPath_AppStore.appConfigs",
-	"mongoDbUrl": "mongodb://macbook:27017/NoInfoPath_AppStore",
+	"mongoDbUrl": "mongodb://localhost:27017/NoInfoPath_AppStore",
 	"uri": "NoInfoPath_AppStore/appConfigs",
 	"collectionName": "appConfigs",
 	"primaryKey": "ID",
@@ -8,7 +8,7 @@
 },
 {
 	"namespace": "NoInfoPath_AppStore.tenants",
-	"mongoDbUrl": "mongodb://macbook:27017/NoInfoPath_AppStore",
+	"mongoDbUrl": "mongodb://localhost:27017/NoInfoPath_AppStore",
 	"uri": "NoInfoPath_AppStore/tenants",
 	"collectionName": "Tenants",
 	"primaryKey": "ID",
