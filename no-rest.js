@@ -1,8 +1,14 @@
-var operations = {
-	"i": "I",
-	"u": "U",
-	"d": "D"
-};
+var mongodb = require("mongodb"),
+	config = require("./config.json"),
+	NoBSONTimestamp = require("noinfopath-bson-timestamp"),
+	jwt = require('restify-jwt'),
+	MongoClient = mongodb.MongoClient,
+	Timestamp = mongodb.Timestamp,
+	operations = {
+		"i": "I",
+		"u": "U",
+		"d": "D"
+	};
 
 function _get(crud, schema, req, res, next) {
 	crud.execute(schema, crud.operations.READ, null, req.odata)
@@ -109,23 +115,24 @@ function _checkVersion(crud, schema, req, res, next) {
 
 	var clientNS = schema.namespace.split(".")[0],
 		checkSchema = {
-			"mongoDbUrl": "mongodb://macbook:27017/local",
+			"mongoDbUrl": config.mongoDbUrl + "/local",
 			//"uri": "NoInfoPath_AppStore/appConfigs",
 			"collectionName": "oplog.rs",
 			"primaryKey": "h",
 			// "versionUri": "changes/version",
 			// "changesUri": "changes"
 		},
+		rx = new RegExp(clientNS + ".[^$cmd]"),
 		mongoq = {
 			query: {
-				ns: schema.namespace
+				ns: rx
 			},
 			fields: {
-				"v": 1
+				"ts": 1
 			},
 			options: {
 				limit: 1,
-				sort: ["v"]
+				sort: [["ts", "descending"]]
 			}
 		};
 
@@ -135,7 +142,7 @@ function _checkVersion(crud, schema, req, res, next) {
 				var r = results[0];
 				res.send(200, {
 					namespace: clientNS,
-					version: r.v
+					version: r.NoBSONTimestamp.toNumber(results.ts)
 				});
 			} else {
 				res.send(500);
@@ -151,44 +158,86 @@ function _checkVersion(crud, schema, req, res, next) {
 		});
 }
 
-function _getChangeSet(crud, schema, req) {
-	//console.log("_getChangeSet", new Timestamp(req.params.version)); 
-
+function _getCurrentVersionNo(crud, schema){
 	var clientNS = schema.namespace.split(".")[0],
 		checkSchema = {
-			"mongoDbUrl": "mongodb://macbook:27017/local",
+			"mongoDbUrl": config.mongoDbUrl + "/local",
 			//"uri": "NoInfoPath_AppStore/appConfigs",
 			"collectionName": "oplog.rs",
 			"primaryKey": "h",
 			// "versionUri": "changes/version",
 			// "changesUri": "changes"
 		},
-		rx = new RegExp(clientNS),
+		rx = new RegExp(clientNS + ".[^$cmd]"),
 		mongoq = {
 			query: {
-				"ns": {
-					"$regex": clientNS
-				},
-				"ts": {
-					"$gt": new Timestamp(req.params.version)
-				}
+				ns: rx
 			},
-			fields: null,
-			options: null
+			fields: {
+				"ts": 1
+			},
+			options: {
+				limit: 1,
+				sort: [["ts", "descending"]]
+			}
 		};
 
 	return crud.execute(checkSchema, crud.operations.READ, null, mongoq)
+		.then(function(data){
+			var d = data.length > 0 ? data[0] : {ts: new Timestamp()};
+
+			return NoBSONTimestamp.toNumber(d.ts);
+		});
+
+}
+
+function _getChangeSet(crud, schema, req) {
+	var ts = NoBSONTimestamp.fromNumber(req.params.version),
+		clientNS = schema.namespace.split(".")[0],
+		checkSchema = {
+			"mongoDbUrl": config.mongoDbUrl + "/local",
+			//"uri": "NoInfoPath_AppStore/appConfigs",
+			"collectionName": "oplog.rs",
+			"primaryKey": "h",
+			// "versionUri": "changes/version",
+			// "changesUri": "changes"
+		},
+		rx = new RegExp(clientNS + ".[^$cmd]"),
+		mongoq = {
+			query: {
+
+				"ns": {
+					"$regex": rx
+				},
+				"ts": {
+					"$gt": ts
+				}
+
+			},
+			fields: null,
+			options: {
+				//limit: 1,
+				sort: [["ts", "ascending"]]
+			}
+		};
+
+	console.log("_getChangeSet::start", ts);
+
+	return crud.execute(checkSchema, crud.operations.READ, null, mongoq)
 		.then(function (data) {
-			console.log(data);
+			console.log("_getChangeSet::success", data);
 			return data;
 		})
 		.catch(function (err) {
-			console.error(err);
+			console.error("_getChangeSet::error", err);
 		});
 
 }
 
 function _getChangeSetRecords(crud, schema, changeset) {
+	console.log("_getChangeSetRecords");
+
+
 	var clientNS = schema.namespace.split(".")[0],
 		mongoq = {
 			query: {},
@@ -198,14 +247,14 @@ function _getChangeSetRecords(crud, schema, changeset) {
 		changeIDs = [];
 	for(var c = 0; c < changeset.length; c++) {
 		var change = changeset[c];
-		console.log(changeset);
-
 		changeIDs[c] = change.o._id;
 	}
 
 	mongoq.query[schema.primaryKey] = {
 		"$in": changeIDs
 	};
+
+	console.log("_getChangeSetRecords", mongoq);
 
 	return crud.execute(schema, crud.operations.READ, null, mongoq)
 		.then(function (data) {
@@ -225,96 +274,17 @@ function _getChangeSetRecords(crud, schema, changeset) {
 
 }
 
-function _createChangeSetResults(schema, changeContext) {
+function _createChangeSetResults(crud, schema, changeContext) {
+	//console.log("_createChangeSetResults::schema",  schema);
 	function NoChange(change, record) {
 		console.log("change", change, "record", record);
 		var nsParts = change.ns.split(".");
 
 		this.tableName = nsParts[1];
-		this.version = change.v;
-		this.operation = operations[change.o];
-		this.changedPKID = change._id;
+		this.version = NoBSONTimestamp.toNumber(change.ts) ;
+		this.operation = operations[change.op];
+		this.changedPKID = record[schema.primaryKey];
 		this.values = record;
-			// 	"tableName": "Cooperators",
-			//   "version": 112027,
-			//   "operation": "U",
-			//   "changedPKID": "b6b6a7f5-7484-4566-ad51-fb8d6e0109a3",
-			//   "values": {
-			//     "CooperatorID": "b6b6a7f5-7484-4566-ad51-fb8d6e0109a3",
-			//     "CooperatorName": "AgriCare test asd",
-			//     "Account": "FCVDT14",
-			//     "ContractReference": "This is a test edit",
-			//     "Inactive": false,
-			//     "Notes": "",
-			//     "DateCreated": "2016-04-05T05:31:50.507",
-			//     "ModifiedDate": "2016-08-12T20:47:15.153",
-			//     "CreatedBy": "38a5fb33-8dc4-4d48-8d39-fad946230081",
-			//     "ModifiedBy": "a715fb8c-d0af-40e1-acb6-7c20abf4e5ed"
-			//   }
-			//
-			// {
-			// 	"ts": Timestamp(1471053053, 1),
-			// 	"h": NumberLong("-3287484221890838648"),
-			// 	"v": 2,
-			// 	"op": "i",
-			// 	"ns": "NoInfoPath_AppStore.appConfigs",
-			// 	"o": {
-			// 		"_id": "45e6e73c-1343-43ac-a50d-89b83493cb64",
-			// 		"shortName": "noinfopath",
-			// 		"defaultScreen": "testapp.dashboard",
-			// 		"noScreens": {},
-			// 		"noRoutes": [{
-			// 			"name": "noinfopath",
-			// 			"url": "/noinfopath",
-			// 			"templateUrl": "default.html",
-			// 			"abstract": true
-			// 		}, {
-			// 			"name": "noinfopath.app",
-			// 			"url": "/app",
-			// 			"templateUrl": "app/index.html",
-			// 			"abstract": true
-			// 		}, {
-			// 			"name": "noinfopath.app.designer",
-			// 			"url": "/design",
-			// 			"templateUrl": "app/designer/index.html"
-			// 		}, {
-			// 			"name": "noinfopath.app.init",
-			// 			"url": "/init",
-			// 			"templateUrl": "app/init/index.html"
-			// 		}, {
-			// 			"name": "noinfopath.dashboard",
-			// 			"url": "/dashboard",
-			// 			"templateUrl": "dashboard/index.html",
-			// 			"controller": "dashboardController"
-			// 		}, {
-			// 			"name": "noinfopath.form",
-			// 			"url": "/form",
-			// 			"templateUrl": "form/index.html",
-			// 			"abstract": true
-			// 		}, {
-			// 			"name": "noinfopath.form.designer",
-			// 			"url": "/designer",
-			// 			"templateUrl": "form/form-designer/form.designer.html",
-			// 			"controller": "formDesignerController"
-			// 		}, {
-			// 			"name": "noinfopath.form.init",
-			// 			"url": "/init",
-			// 			"templateUrl": "form/form-init/form-init.html",
-			// 			"controller": "formInitController"
-			// 		}, {
-			// 			"name": "noinfopath.form.viewer",
-			// 			"url": "/viewer",
-			// 			"templateUrl": "form/form-init/form.viewer.html",
-			// 			"controller": "formViewerController"
-			// 		}],
-			// 		"CreatedBy": "2a1e4ce8-22de-4642-acda-e32ce81a76b9",
-			// 		"noDataSources": {},
-			// 		"DateCreated": "2016-08-13T01:50:41.4141",
-			// 		"ModifiedDate": "2016-08-13T01:50:41.4141",
-			// 		"ModifiedBy": "2a1e4ce8-22de-4642-acda-e32ce81a76b9",
-			// 		"ID": "45e6e73c-1343-43ac-a50d-89b83493cb64"
-			// 	}
-			// }
 	}
 
 	var result = {
@@ -327,15 +297,27 @@ function _createChangeSetResults(schema, changeContext) {
 		var change = changeContext.changeSet[c],
 			record = changeContext.changeSetRecords[c];
 
-		result.changes[c] = new NoChange(change, record);
+		if(record) {
+			result.changes[c] = new NoChange(change, record);
+			//console.log(result.changes[c]);
+		}
 	}
-	return Promise.resolve(result);
+
+	return _getCurrentVersionNo(crud, schema)
+		.then(function(version){
+
+			result.version = version;
+
+			return result;
+		});
+
+
 }
 
 function _getChanges(crud, schema, req, res, next) {
 	_getChangeSet(crud, schema, req)
 		.then(_getChangeSetRecords.bind(null, crud, schema))
-		.then(_createChangeSetResults.bind(null, schema))
+		.then(_createChangeSetResults.bind(null, crud, schema))
 		.then(function (changes) {
 			res.send(200, changes);
 		})
@@ -363,18 +345,21 @@ function _getChanges(crud, schema, req, res, next) {
 
 }
 
-
 function _configRoute(server, crudProvider, schema) {
-	console.log("Configuring route ", schema.uri);
+	var jwtCheck = jwt({
+		secret: new Buffer(config.auth0.secret, "base64"),
+		audience: config.auth0.audience
+	});
 
-	server.get(schema.uri, _get.bind(null, crudProvider, schema));
-	server.get(schema.uri + "/:id", _getOne.bind(null, crudProvider, schema));
-	server.put(schema.uri + "/:id", _putByPrimaryKey.bind(null, crudProvider, schema));
-	server.del(schema.uri + "/:id", _delete.bind(null, crudProvider, schema));
+	console.log("Configuring route ", schema.uri);
+	server.get(schema.uri, jwtCheck, _get.bind(null, crudProvider, schema));
+	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProvider, schema));
+	server.put(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProvider, schema));
+	server.del(schema.uri + "/:id", jwtCheck, _delete.bind(null, crudProvider, schema));
 	server.post(schema.uri, _post.bind(null, crudProvider, schema));
 
-	if(schema.versionUri) server.get(schema.versionUri, _checkVersion.bind(null, crudProvider, schema));
-	if(schema.changesUri) server.get(schema.changesUri + "/:version", _getChanges.bind(null, crudProvider, schema));
+	if(schema.versionUri) server.get(schema.versionUri, jwtCheck, _checkVersion.bind(null, crudProvider, schema));
+	if(schema.changesUri) server.get(schema.changesUri + "/:version", jwtCheck, _getChanges.bind(null, crudProvider, schema));
 }
 
 module.exports = function (server, crudProvider, schemas) {

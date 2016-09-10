@@ -1,19 +1,21 @@
 {
-	"name": "noinfopath-restapi",
-	"version": "1.0.1",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"start": "node index.js"
-	},
-	"author": "",
-	"license": "MIT",
-	"dependencies": {
-		"@noinfopath/noinfopath-node-libraries": "^1.0.0",
-		"es6-promise": "^3.2.1",
-		"mongo": "^0.1.0",
-		"mongodb": "^2.2.1",
-		"odata-v4-mongodb": "^0.1.2",
-		"restify": "^4.1.1"
-	}
+  "name": "noinfopath-restapi",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@noinfopath/noinfopath-node-libraries": "^1.0.0",
+    "es6-promise": "^3.2.1",
+    "mongo": "^0.1.0",
+    "mongodb": "^2.2.1",
+    "noinfopath-bson-timestamp": "^1.0.0",
+    "odata-v4-mongodb": "^0.1.2",
+    "restify": "^4.1.1",
+    "restify-jwt": "^0.4.0"
+  }
 }

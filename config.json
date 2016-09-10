@@ -4,6 +4,11 @@
 		"version": "*",
 	    "agent": false
 	},
+	"auth0": {
+		"secret": "iOeB2zYATIwCzFOJGWlhEkucjW7YGjplll7xzDbZTbuwlFKMcvWWNJuLWxIDxRIP",
+		"audience": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x"
+	},
+	"mongoDbUrl": "mongodb://macbook:27017",
 	"logging": {
 		"name": "RESTAPI",
 		"logLevels": {
