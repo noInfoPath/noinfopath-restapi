@@ -1,7 +1,7 @@
 {
 	"server": {
 		 "address": "104.196.185.19",
-		"port": 4001,
+		"port": 80,
 		"version": "*",
 	    "agent": false
 	},
