@@ -22,7 +22,7 @@ server.use(odataParser());
 
 noREST(server, crud, schemas);
 
-server.listen(config.server.port, function() {
+server.listen(config.server.port, config.server.address, function() {
   console.log('%s listening at %s', server.name, server.url);
 });
 
