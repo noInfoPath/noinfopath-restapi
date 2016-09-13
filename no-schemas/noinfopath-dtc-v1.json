@@ -1,5 +1,5 @@
 [{
-	"mongoDbUrl": "mongodb://macbook:27017/dtc",
+	"mongoDbUrl": "mongodb://localhost:27017/dtc",
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID"

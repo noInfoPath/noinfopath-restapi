@@ -1,5 +1,6 @@
 {
 	"server": {
+		 "address": "104.196.185.19",
 		"port": 4001,
 		"version": "*",
 	    "agent": false
@@ -8,7 +9,7 @@
 		"secret": "iOeB2zYATIwCzFOJGWlhEkucjW7YGjplll7xzDbZTbuwlFKMcvWWNJuLWxIDxRIP",
 		"audience": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x"
 	},
-	"mongoDbUrl": "mongodb://macbook:27017",
+	"mongoDbUrl": "mongodb://localhost:27017",
 	"logging": {
 		"name": "RESTAPI",
 		"logLevels": {
