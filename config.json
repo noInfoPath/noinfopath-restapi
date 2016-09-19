@@ -1,9 +1,9 @@
 {
 	"server": {
-		 "address": "104.196.185.19",
-		"port": 80,
+		"address": "macbook",
+		"port": 4000,
 		"version": "*",
-	    "agent": false
+		"agent": false
 	},
 	"auth0": {
 		"secret": "iOeB2zYATIwCzFOJGWlhEkucjW7YGjplll7xzDbZTbuwlFKMcvWWNJuLWxIDxRIP",
