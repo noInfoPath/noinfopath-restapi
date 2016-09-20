@@ -11,6 +11,7 @@ var mongodb = require("mongodb"),
 	};
 
 function _get(crud, schema, req, res, next) {
+	console.log(req.odata);
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			//console.log(results);
@@ -30,10 +31,8 @@ function _get(crud, schema, req, res, next) {
 }
 
 function _getOne(crud, schema, req, res, next) {
-	var filter = {};
-	filter[schema.primaryKey] = req.params.id;
-
-	crud.execute(schema, crud.operations.READ, null, filter)
+	req.odata.query[schema.primaryKey] = req.params.id;
+	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			if(results.length) {
 				res.send(200, results[0]);

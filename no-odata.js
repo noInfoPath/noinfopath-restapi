@@ -29,7 +29,8 @@ module.exports = function() {
 
 		req.odata = mongoq;
 
-		//console.log(req.odata);
+
+		console.log("no-odata", req.odata);
 		next();
 	};
 };
