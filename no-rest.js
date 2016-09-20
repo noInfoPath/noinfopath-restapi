@@ -11,7 +11,7 @@ var mongodb = require("mongodb"),
 	};
 
 function _get(crud, schema, req, res, next) {
-	console.log(req.odata);
+	//console.log("_get", req.odata);
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			//console.log(results);
@@ -22,7 +22,7 @@ function _get(crud, schema, req, res, next) {
 			}
 		})
 		.catch(function (err) {
-			console.error(err);
+			//console.error(err);
 			res.send(500, err);
 		})
 		.then(function () {

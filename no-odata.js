@@ -3,7 +3,6 @@ var odataV4 = require("odata-v4-mongodb"),
 
 module.exports = function() {
 	return function (req, res, next){
-		//console.log(req.query);
 		var query = req.query,
 			mongoq = {
 				query: {},
@@ -11,7 +10,6 @@ module.exports = function() {
 			};
 
 		if(query.$filter) {
-			//console.log("odata: ", query.$filter);
 			mongoq.query = odataV4.createFilter(query.$filter);
 		}
 
