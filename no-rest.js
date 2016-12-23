@@ -8,7 +8,15 @@ var mongodb = require("mongodb"),
 		"i": "I",
 		"u": "U",
 		"d": "D"
-	};
+	},
+	base64url = require("base64url");
+
+function _error(op, res, err) {
+	console.error(op, "ERROR", err);
+	res.statusMessage = JSON.stringify(err);
+	res.statusCode = 500;
+	res.send(500);
+}
 
 function _get(crud, schema, req, res, next) {
 	//console.log("_get", req.odata);
@@ -21,10 +29,7 @@ function _get(crud, schema, req, res, next) {
 				res.send(404);
 			}
 		})
-		.catch(function (err) {
-			//console.error(err);
-			res.send(500, err);
-		})
+		.catch(_error.bind(null, "GET", res))
 		.then(function () {
 			next();
 		});
@@ -40,10 +45,7 @@ function _getOne(crud, schema, req, res, next) {
 				res.send(404);
 			}
 		})
-		.catch(function (err) {
-			console.error(err);
-			res.send(500, err);
-		})
+		.catch(_error.bind(null, "GET", res))
 		.then(function () {
 			next();
 		});
@@ -67,10 +69,7 @@ function _putByPrimaryKey(crud, schema, req, res, next) {
 		.then(function (results) {
 			res.send(200, results);
 		})
-		.catch(function (err) {
-			console.error(err);
-			res.send(500, err);
-		})
+		.catch(_error.bind(null, "PUT", res))
 		.then(function () {
 			next();
 		});
@@ -87,10 +86,7 @@ function _post(crud, schema, req, res, next) {
 		.then(function (results) {
 			res.send(200, results);
 		})
-		.catch(function (err) {
-			console.error(err);
-			res.send(500, err);
-		})
+		.catch(_error.bind(null, "POST", res))
 		.then(function () {
 			next();
 		});
@@ -102,10 +98,7 @@ function _delete(crud, schema, req, res, next) {
 		.then(function (results) {
 			res.send(200, results);
 		})
-		.catch(function (err) {
-			console.error(err);
-			res.send(500, err);
-		})
+		.catch(_error.bind(null, "DELETE", res))
 		.then(function () {
 			next();
 		});
@@ -347,7 +340,7 @@ function _getChanges(crud, schema, req, res, next) {
 
 function _configRoute(server, crudProvider, schema) {
 	var jwtCheck = jwt({
-		secret: new Buffer(config.auth0.secret, "base64"),
+		secret: base64url.decode(config.auth0.secret),
 		audience: config.auth0.audience
 	});
 

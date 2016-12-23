@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "@noinfopath/noinfopath-node-libraries": "^1.0.0",
+    "base64url": "^2.0.0",
     "es6-promise": "^3.2.1",
     "mongo": "^0.1.0",
     "mongodb": "^2.2.1",

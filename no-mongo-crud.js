@@ -80,7 +80,8 @@ function MongoConnection(schema, type, data, filter) {
 	}
 
 	function closeConnection(){
-		_db.close();
+		if(_db)
+			_db.close();
 		//console.info("Connection closed ", schema.collectionName);
 	}
 
@@ -91,8 +92,9 @@ function MongoConnection(schema, type, data, filter) {
 				.then(executeTransaction.bind(null, type, data, filter))
 				.then(resolve)
 				.catch(function(err) {
-					console.error(err);
-					reject(err);
+					var m = err.errmsg || JSON.stringify(err);
+					//console.error(m);
+					reject({source: "MongoDB", message: m});
 				})
 				.then(closeConnection);
 		});
