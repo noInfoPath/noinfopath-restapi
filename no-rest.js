@@ -339,8 +339,9 @@ function _getChanges(crud, schema, req, res, next) {
 }
 
 function _configRoute(server, crudProvider, schema) {
-	var jwtCheck = jwt({
-		secret: base64url.decode(config.auth0.secret),
+	var secret = base64url.decode(config.auth0.secret)
+		jwtCheck = jwt({
+		secret: secret,
 		audience: config.auth0.audience
 	});
 

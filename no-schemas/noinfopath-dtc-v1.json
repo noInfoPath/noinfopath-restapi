@@ -1,5 +1,5 @@
 [{
-	"mongoDbUrl": "mongodb://gitla.img.local:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://gitlab.img.local:27017/efr2_dtc",
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID"
