@@ -5,6 +5,9 @@
 		"version": "*",
 		"agent": false
 	},
+	"cors": {
+		"whitelist": ["http://macbook:3000"]
+	},
 	"auth0": {
 		"secret": "NTE1Njg2NDFGQTg5MzY1RDhDMjQ5REREQjU1RTE3QUE",
 		"audience": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x"

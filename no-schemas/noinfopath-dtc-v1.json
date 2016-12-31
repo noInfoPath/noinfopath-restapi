@@ -3,4 +3,9 @@
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID"
+},{
+	"mongoDbUrl": "mongodb://gitlab.img.local:27017/efr2_dtc",
+	"uri": "dtc/NoInfoPath_FileUploadCache",
+	"collectionName": "NoInfoPath_FileUploadCache",
+	"primaryKey": "FileID"
 }]

@@ -79,7 +79,7 @@ function _putByPrimaryKey(crud, schema, req, res, next) {
 function _post(crud, schema, req, res, next) {
 	//console.log(req.body);
 	console.log("POST", req.url);
-	console.log(req.headers);
+	console.log("POST", req.headers);
 	req.body._id = req.body[schema.primaryKey];
 
 	crud.execute(schema, crud.operations.CREATE, req.body)
@@ -349,6 +349,7 @@ function _configRoute(server, crudProvider, schema) {
 	server.get(schema.uri, jwtCheck, _get.bind(null, crudProvider, schema));
 	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProvider, schema));
 	server.put(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProvider, schema));
+	server.patch(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProvider, schema));
 	server.del(schema.uri + "/:id", jwtCheck, _delete.bind(null, crudProvider, schema));
 	server.post(schema.uri, jwtCheck, _post.bind(null, crudProvider, schema));
 
