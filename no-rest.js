@@ -19,7 +19,7 @@ function _error(op, res, err) {
 }
 
 function _get(crud, schema, req, res, next) {
-	//console.log("_get", req.odata);
+
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			//console.log(results);
@@ -79,7 +79,7 @@ function _putByPrimaryKey(crud, schema, req, res, next) {
 function _post(crud, schema, req, res, next) {
 	//console.log(req.body);
 	console.log("POST", req.url);
-	console.log("POST", req.headers);
+	//console.log("POST", req.headers);
 	req.body._id = req.body[schema.primaryKey];
 
 	crud.execute(schema, crud.operations.CREATE, req.body)

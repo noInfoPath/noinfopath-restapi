@@ -16,13 +16,11 @@ function corsHandler(req, res, next) {
     res.setHeader('Access-Control-Allow-Methods', '*');
     res.setHeader('Access-Control-Expose-Headers', 'X-Api-Version, X-Request-Id, X-Response-Time');
     res.setHeader('Access-Control-Max-Age', '1000');
-
-	console.log(res.headers);
     return next();
 }
 
 function optionsRoute(req, res, next) {
-    console.warn("TODO: Make this more secure.");
+    console.warn("optionsRoute TODO: Make this more secure.");
     res.send(204);
     return next();
 }
@@ -31,10 +29,10 @@ function optionsRoute(req, res, next) {
 noLibs.logging(config);
 
 server.pre(function(request, response, next) {
-    console.info("Start: ", request.method, request.url, request.headers); // (1)
+    console.info("Start: ", request.method, request.url); // (1)
     return next();
 });
-console.log(config.cors);
+//console.log(config.cors);
 server.use(restify.CORS({
     origins: config.cors.whitelist, // defaults to ['*']
     credentials: true, // defaults to false
@@ -42,7 +40,8 @@ server.use(restify.CORS({
     methods: ['GET', 'PUT', 'DELETE', 'POST', 'OPTIONS']
 }));
 
-server.use(restify.fullResponse())
+server.use(restify.fullResponse());
+
 server.use(restify.queryParser());
 
 server.use(restify.bodyParser());
@@ -58,6 +57,5 @@ server.listen(config.server.port, config.server.address, function() {
 });
 
 server.on("after", function(request, response, route, error) {
-    console.log("End: ", route.spec.method, " ", route.spec.path, " ", error);
-    //response.end();
+    console.log("End: ", route.spec.method, route.spec.path, error || "");
 });

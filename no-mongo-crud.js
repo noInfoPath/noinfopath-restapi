@@ -21,7 +21,7 @@ function _resolveData(indata) {
 function _countDocuments(collection, data, filter) {
 	return collection.count(filter.query, filter.options)
 		.then(function(data){
-			console.log(data);
+			//console.log(data);
 			return data;
 		});
 }
