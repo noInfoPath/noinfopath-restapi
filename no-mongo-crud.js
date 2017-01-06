@@ -31,6 +31,9 @@ function _readDocument(collection, data, filter) {
 	return collection.find(filter.query, filter.fields, filter.options).toArray()
 		.then(function(data){
 			return data;
+		})
+		.catch(function(err){
+			console.error("CRUD_OPERATIONS.READ", err);
 		});
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
@@ -41,6 +44,9 @@ function _insertDocument(collection, data, filter) {
 	return collection.insertOne(d)
 		.then(function(data){
 			return data;
+		})
+		.catch(function(err){
+			console.error("CRUD_OPERATIONS.CREATE", err);
 		})
 		;
 }
@@ -53,14 +59,21 @@ function _updateDocument(collection, data, filter){
 			return data;
 		})
 		.catch(function(err){
-			console.error(err);
+			console.error("CRUD_OPERATIONS.UPDATE",err);
 			return err;
 		});
 }
 CRUD[CRUD_OPERATIONS.UPDATE] = _updateDocument;
 
 function _deleteDocument(collection, data, filter) {
-	return collection.deleteOne(filter);
+	return collection.deleteOne(filter)
+		.then(function(data){
+			return data;
+		})
+		.catch(function(err){
+			console.error("CRUD_OPERATIONS.DELETE",err);
+			return err;
+		});
 }
 CRUD[CRUD_OPERATIONS.DELETE] = _deleteDocument;
 
