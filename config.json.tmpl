@@ -1,0 +1,46 @@
+{
+	"server": {
+		"address": "0.0.0.0",
+		"port": ~NIP_RESTAPI_PORT~,
+		"version": "*",
+		"agent": false
+	},
+	"cors": {
+		"whitelist": ~CORS_WHITELIST~
+	},
+	"auth0": {
+		"secret": "~JWT_SECRET~",
+		"audience": "~JWT_AUDIENCE~"
+	},
+	"mongoDbUrl": "~NIP_MONGO_HOST~",
+	"logging": {
+		"name": "RESTAPI",
+		"logLevels": {
+			"none": 0,
+			"errors": 1,
+			"log": 2,
+			"warnings": 3,
+			"info": 4,
+			"debug": 5,
+			"verbose": 6
+		},
+		"bunyan": {
+			"name": "noInfoPath::restapi",
+			"streams": [{
+				"level": "info",
+				"type": "rotating-file",
+				"path": "~NIP_LOG_ROOT~/logs/restapi.log",
+				"period": "1d",
+				"count": 100
+			}, {
+				"level": "error",
+				"type": "rotating-file",
+				"path": "~NIP_LOG_ROOT~/logs/restapi_errors.log",
+				"period": "1d",
+				"count": 100
+			}]
+		}
+
+	}
+
+}

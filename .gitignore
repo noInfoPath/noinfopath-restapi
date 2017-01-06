@@ -1,2 +1,5 @@
 /node_modules
 /logs
+config.json
+/no-schemas/noinfopath-app-store.json
+/no-schemas/noinfopath-dtc-v1.json

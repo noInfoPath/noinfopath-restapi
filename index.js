@@ -28,6 +28,12 @@ function optionsRoute(req, res, next) {
 
 noLibs.logging(config);
 
+console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.4");
+console.log("Copyright (c) 2015 The NoInfoPath Group, LLC.");
+console.log("Licensed under the MIT License. (MIT)");
+console.log("");
+console.log("Configuration in progress...")
+
 server.pre(function(request, response, next) {
     console.info("Start: ", request.method, request.url); // (1)
     return next();

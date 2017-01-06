@@ -6,7 +6,7 @@ function _configure(){
 		tmp;
 
 	files.forEach(function(v, k){
-		if(v.indexOf(".json") > -1){
+		if(v.lastIndexOf(".json") !== -1 && v.lastIndexOf(".tmpl") === -1){
 			tmp = require("./" + v.replace(".json", ""));
 			schemas = schemas.concat(tmp);
 		}
