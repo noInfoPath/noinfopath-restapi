@@ -1,15 +1,15 @@
 [{
-	"mongoDbUrl": "mongodb://gitlab.img.local:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://gitlab.imginconline.com:27017/efr2_dtc",
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID"
 },{
-	"mongoDbUrl": "mongodb://gitlab.img.local:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://gitlab.imginconline.com:27017/efr2_dtc",
 	"uri": "dtc/NoInfoPath_FileUploadCache",
 	"collectionName": "NoInfoPath_FileUploadCache",
 	"primaryKey": "FileID"
 },{
-	"mongoDbUrl": "mongodb://gitlab.img.local:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://gitlab.imginconline.com:27017/efr2_dtc",
 	"uri": "dtc/log",
 	"collectionName": "logs",
 	"primaryKey": "_id"

@@ -35,11 +35,11 @@ module.exports = function() {
             }
 
             if (query.$top) {
-                mongoq.options.limit = query.$top;
+                mongoq.options.limit = Number(query.$top);
             }
 
             if (query.$skip) {
-                mongoq.options.skip = query.$skip;
+                mongoq.options.skip = Number(query.$skip);
             }
 
 			if(query.$inlinecount) {

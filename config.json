@@ -12,7 +12,7 @@
 		"secret": "NTE1Njg2NDFGQTg5MzY1RDhDMjQ5REREQjU1RTE3QUE",
 		"audience": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x"
 	},
-	"mongoDbUrl": "mongodb://gitlab.img.local:27017",
+	"mongoDbUrl": "mongodb://gitlab.imginconline.com:27017",
 	"logging": {
 		"name": "RESTAPI",
 		"logLevels": {
