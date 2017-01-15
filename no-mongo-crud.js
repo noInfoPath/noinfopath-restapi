@@ -19,7 +19,8 @@ function _resolveData(indata) {
 }
 
 function _countDocuments(collection, data, filter) {
-	return collection.count(filter.query, filter.options)
+
+	return collection.count(filter.query)
 		.then(function(data){
 			//console.log(data);
 			return data;
@@ -30,7 +31,20 @@ CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 function _readDocument(collection, data, filter) {
 	return collection.find(filter.query, filter.fields, filter.options).toArray()
 		.then(function(data){
-			return data;
+			var retval = {}
+			retval.value = data
+			if(filter.getTotal) {
+				return _countDocuments(collection, data, filter)
+					.then(function(total){
+						retval["odata.metadata"] = true;
+						retval["odata.count"] = total;
+
+
+						return retval;
+					});
+			} else {
+				return data;
+			}
 		})
 		.catch(function(err){
 			console.error("CRUD_OPERATIONS.READ", err);
@@ -82,7 +96,7 @@ function MongoConnection(schema, type, data, filter) {
 
 	function executeTransaction(type, data, filter, collection) {
 		//console.log(arguments);
-		console.log("executeTransaction", type, filter);
+		console.log("executeTransaction", type);
 		return CRUD[type](collection, data, filter);
 	}
 

@@ -8,4 +8,9 @@
 	"uri": "dtc/NoInfoPath_FileUploadCache",
 	"collectionName": "NoInfoPath_FileUploadCache",
 	"primaryKey": "FileID"
+},{
+	"mongoDbUrl": "mongodb://gitlab.img.local:27017/efr2_dtc",
+	"uri": "dtc/log",
+	"collectionName": "logs",
+	"primaryKey": "_id"
 }]

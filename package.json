@@ -15,7 +15,7 @@
     "mongo": "^0.1.0",
     "mongodb": "^2.2.1",
     "noinfopath-bson-timestamp": "^1.0.0",
-    "odata-v4-mongodb": "^0.1.2",
+    "odata-v4-mongodb": "^0.1.9",
     "restify": "^4.1.1",
     "restify-jwt": "^0.4.0"
   }

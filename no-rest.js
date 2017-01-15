@@ -22,8 +22,8 @@ function _get(crud, schema, req, res, next) {
 
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
-			//console.log(results);
-			if(results.length) {
+			console.log(results["odata.metadata"]);
+			if(results.length || results["odata.metadata"]) {
 				res.send(200, results);
 			} else {
 				res.send(404);

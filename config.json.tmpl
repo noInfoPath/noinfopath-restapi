@@ -26,18 +26,13 @@
 		},
 		"bunyan": {
 			"name": "noInfoPath::restapi",
+			"enabled": true,
 			"streams": [{
-				"level": "info",
-				"type": "rotating-file",
-				"path": "~NIP_LOG_ROOT~restapi.log",
-				"period": "1d",
-				"count": 100
-			}, {
 				"level": "error",
 				"type": "rotating-file",
 				"path": "~NIP_LOG_ROOT~restapi_errors.log",
 				"period": "1d",
-				"count": 100
+				"count": 10
 			}]
 		}
 

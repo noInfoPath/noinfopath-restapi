@@ -6,7 +6,7 @@
 		"agent": false
 	},
 	"cors": {
-		"whitelist": ["http://macbook:3000", "http://macbook:8080"]
+		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080"]
 	},
 	"auth0": {
 		"secret": "NTE1Njg2NDFGQTg5MzY1RDhDMjQ5REREQjU1RTE3QUE",
@@ -26,18 +26,13 @@
 		},
 		"bunyan": {
 			"name": "noInfoPath::restapi",
+			"enabled": true,
 			"streams": [{
-				"level": "info",
-				"type": "rotating-file",
-				"path": "./logs/restapi.log",
-				"period": "1d",
-				"count": 100
-			}, {
 				"level": "error",
 				"type": "rotating-file",
 				"path": "./logs/restapi_errors.log",
 				"period": "1d",
-				"count": 100
+				"count": 10
 			}]
 		}
 
