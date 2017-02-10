@@ -84,7 +84,11 @@ function _post(crud, schema, req, res, next) {
 
 	crud.execute(schema, crud.operations.CREATE, req.body)
 		.then(function (results) {
-			res.send(200, results);
+			res.statusMessage = "OK";
+			res.statusCode = 200;
+			res.end("ok");
+//			res.send(200, results);
+			console.log("post was successful");
 		})
 		.catch(_error.bind(null, "POST", res))
 		.then(function () {

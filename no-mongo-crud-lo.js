@@ -55,19 +55,48 @@ function _readDocument(collection, data, filter, db) {
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
 function _insertDocument(payload, data, filter, db) {
-	var d = _resolveData(data),
-		gs = new GridStore(db, data.ChangeID, "f" + data.ChangeID + ".json", "w", payload);
+	return new Promise(function(resolve, reject) {
+		var d = JSON.stringify(data),
+			bucket = new GridFSBucket(db); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
 
-	return gs.open()
-		.then(function(_gs) {
-			return _gs.write(JSON.stringify(data));
+		var stream = require('stream');
+		var rs = new stream.Readable({ objectMode: true });
+		rs.push(JSON.stringify(data));
+
+		var uploadStream = bucket.openUploadStream(data.ChangeID + ".json", payload);
+
+		uploadStream.once("finish", function(err) {
+			resolve(true);
 		})
-		.then(function(data) {
-			return data;
+
+
+		uploadStream.once("error", function(err) {
+			console.error(err);
+			reject(err);
 		})
-		.catch(function(err){
-			console.error("CRUD_OPERATIONS.CREATE", err);
+
+		uploadStream.write(d, function(err) {
+			if(err) {
+				console.error(err);
+			} else {
+				console.log("working in write");
+			}
 		})
+
+		uploadStream.end();
+
+	});
+
+	// return gs.open()
+	// 	.then(function(_gs) {
+	// 		return _gs.write(JSON.stringify(data));
+	// 	})
+	// 	.then(function(data) {
+	// 		return data;
+	// 	})
+	// 	.catch(function(err){
+	// 		console.error("CRUD_OPERATIONS.CREATE", err);
+	// 	})
 		;
 }
 CRUD[CRUD_OPERATIONS.CREATE] = _insertDocument;
@@ -116,7 +145,7 @@ function MongoConnection(schema, type, data, filter) {
 			_db = db;
 
 			var payload = {
-				"content_type": "application/json",
+				"contentType": "application/json",
 				"metadata": {}
 			};
 
