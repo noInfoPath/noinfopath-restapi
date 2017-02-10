@@ -56,6 +56,7 @@ CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 function _insertDocument(collection, data, filter) {
 	var d = _resolveData(data);
 
+
 	return collection.insertOne(d)
 		.then(function(data){
 			return data;

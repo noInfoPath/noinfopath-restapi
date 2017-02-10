@@ -338,25 +338,27 @@ function _getChanges(crud, schema, req, res, next) {
 
 }
 
-function _configRoute(server, crudProvider, schema) {
+function _configRoute(server, crudProvider, crudProviderLO, schema) {
 	var secret = base64url.decode(config.auth0.secret)
 		jwtCheck = jwt({
 		secret: secret,
 		audience: config.auth0.audience
-	});
+	}),
+
+	crudProv = schema.largeObjectHandler ? crudProviderLO : crudProvider;
 
 	console.log("Configuring route ", schema.uri);
-	server.get(schema.uri, jwtCheck, _get.bind(null, crudProvider, schema));
-	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProvider, schema));
-	server.put(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProvider, schema));
-	server.patch(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProvider, schema));
-	server.del(schema.uri + "/:id", jwtCheck, _delete.bind(null, crudProvider, schema));
-	server.post(schema.uri, jwtCheck, _post.bind(null, crudProvider, schema));
+	server.get(schema.uri, jwtCheck, _get.bind(null, crudProv, schema));
+	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProv, schema));
+	server.put(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
+	server.patch(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
+	server.del(schema.uri + "/:id", jwtCheck, _delete.bind(null, crudProv, schema));
+	server.post(schema.uri, jwtCheck, _post.bind(null, crudProv, schema));
 
 	if(schema.versionUri) server.get(schema.versionUri, jwtCheck, _checkVersion.bind(null, crudProvider, schema));
 	if(schema.changesUri) server.get(schema.changesUri + "/:version", jwtCheck, _getChanges.bind(null, crudProvider, schema));
 }
 
-module.exports = function (server, crudProvider, schemas) {
-	schemas.forEach(_configRoute.bind(null, server, crudProvider));
+module.exports = function (server, crudProvider, crudProviderLO, schemas) {
+	schemas.forEach(_configRoute.bind(null, server, crudProvider, crudProviderLO));
 };
