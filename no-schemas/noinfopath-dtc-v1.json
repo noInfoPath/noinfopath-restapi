@@ -3,7 +3,8 @@
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID",
-	"largeObjectHandler": true
+	"largeObjectHandler": true,
+	"columns": ["ChangeID", "CreatedBy", "DateCreated", "ModifiedBy", "ModifiedDate", "namespace", "state", "timestamp", "transactionId", "userId"]
 },{
 	"mongoDbUrl": "mongodb://gitlab.imginconline.com:27017/efr2_dtc",
 	"uri": "dtc/NoInfoPath_FileUploadCache",

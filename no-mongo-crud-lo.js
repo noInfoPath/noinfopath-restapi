@@ -1,6 +1,7 @@
 var config = require("./config"),
 	MongoClient = require('mongodb').MongoClient,
-	gridStore = require('mongodb').GridStore,
+	GridStore = require('mongodb').GridStore,
+	GridFSBucket = require('mongodb').GridFSBucket,
 	CRUD = {},
 	CRUD_OPERATIONS = {
 		"CREATE": "create",
@@ -29,7 +30,7 @@ function _countDocuments(collection, data, filter) {
 }
 CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 
-function _readDocument(collection, data, filter) {
+function _readDocument(collection, data, filter, db) {
 	return collection.find(filter.query, filter.fields, filter.options).toArray()
 		.then(function(data){
 			var retval = {}
@@ -53,12 +54,15 @@ function _readDocument(collection, data, filter) {
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
-function _insertDocument(collection, data, filter) {
-	var d = _resolveData(data);
+function _insertDocument(payload, data, filter, db) {
+	var d = _resolveData(data),
+		gs = new GridStore(db, data.ChangeID, "f" + data.ChangeID + ".json", "w", payload);
 
-
-	return collection.insertOne(d)
-		.then(function(data){
+	return gs.open()
+		.then(function(_gs) {
+			return _gs.write(JSON.stringify(data));
+		})
+		.then(function(data) {
 			return data;
 		})
 		.catch(function(err){
@@ -68,7 +72,7 @@ function _insertDocument(collection, data, filter) {
 }
 CRUD[CRUD_OPERATIONS.CREATE] = _insertDocument;
 
-function _updateDocument(collection, data, filter){
+function _updateDocument(collection, data, filter, db){
 	//console.log("XXXXXXX", filter);
 	return collection.update(filter, _resolveData(data))
 		.then(function(data){
@@ -81,7 +85,7 @@ function _updateDocument(collection, data, filter){
 }
 CRUD[CRUD_OPERATIONS.UPDATE] = _updateDocument;
 
-function _deleteDocument(collection, data, filter) {
+function _deleteDocument(collection, data, filter, db) {
 	return collection.deleteOne(filter)
 		.then(function(data){
 			return data;
@@ -96,16 +100,35 @@ CRUD[CRUD_OPERATIONS.DELETE] = _deleteDocument;
 function MongoConnection(schema, type, data, filter) {
 	var _db;
 
-	function executeTransaction(type, data, filter, collection) {
+	function executeTransaction(type, data, filter, payload) {
 		//console.log(arguments);
-		console.log("executeTransaction", type);
-		return CRUD[type](collection, data, filter);
+		console.log("executeTransaction on Grid Store", type);
+
+
+		return CRUD[type](payload, data, filter, _db);
 	}
 
-	function resolveCollection(collectionName, db) {
-		console.info("Connection open.", collectionName);
-		_db = db;
-		return db.collection(collectionName);
+	function resolveGridStoreMetadata(collectionName, schema, data, db) {
+
+		return new Promise(function(resolve, reject) {
+
+			console.info("Creating GridStore", collectionName);
+			_db = db;
+
+			var payload = {
+				"content_type": "application/json",
+				"metadata": {}
+			};
+
+			for(var i=0; i<schema.columns.length; i++) {
+				var colName = schema.columns[i];
+				payload.metadata[colName] = data[colName];
+			}
+
+			resolve(payload);
+
+		});
+
 	}
 
 	function closeConnection(){
@@ -116,8 +139,9 @@ function MongoConnection(schema, type, data, filter) {
 
 	this.run = function(){
 		return new Promise(function(resolve, reject) {
+
 			MongoClient.connect(schema.mongoDbUrl)
-				.then(resolveCollection.bind(null, schema.collectionName))
+				.then(resolveGridStoreMetadata.bind(null, schema.collectionName, schema, data))
 				.then(executeTransaction.bind(null, type, data, filter))
 				.then(resolve)
 				.catch(function(err) {
