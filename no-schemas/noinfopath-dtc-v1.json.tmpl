@@ -2,8 +2,17 @@
 	"mongoDbUrl": "~NIP_MONGO_HOST~/efr2_dtc",
 	"uri": "dtc/changes",
 	"collectionName": "changes",
-	"primaryKey": "ChangeID"
-},{
+	"primaryKey": "ChangeID",
+	"largeObjectHandler": true,
+	"columns": ["ChangeID", "CreatedBy", "DateCreated", "ModifiedBy", "ModifiedDate", "namespace", "state", "timestamp", "transactionId", "userId"]
+},
+{
+	"mongoDbUrl": "~NIP_MONGO_HOST~/efr2_dtc",
+	"uri": "dtc/changes-metadata",
+	"collectionName": "fs.files",
+	"primaryKey": "_id"
+},
+{
 	"mongoDbUrl": "~NIP_MONGO_HOST~/efr2_dtc",
 	"uri": "dtc/NoInfoPath_FileUploadCache",
 	"collectionName": "NoInfoPath_FileUploadCache",
