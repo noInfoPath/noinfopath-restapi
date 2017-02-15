@@ -16,11 +16,10 @@ module.exports = function() {
             if (query.$filter) {
 				var t = query.$filter.replace("guid", ""),
                     q = odataV4.createFilter(t),
-                    stringified = JSON.stringify(q).replace(/_/g, '.'),
-                    converted = JSON.parse(stringified);
+                    stringified = JSON.stringify(q).replace(/_/g, '.');
 
 
-                mongoq.query = converted;
+                mongoq.query = JSON.parse(stringified);
             }
 
             if (query.$orderby) {
