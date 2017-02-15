@@ -5,7 +5,14 @@
 	"primaryKey": "ChangeID",
 	"largeObjectHandler": true,
 	"columns": ["ChangeID", "CreatedBy", "DateCreated", "ModifiedBy", "ModifiedDate", "namespace", "state", "timestamp", "transactionId", "userId"]
-},{
+},
+{
+	"mongoDbUrl": "mongodb://gitlab.imginconline.com:27017/efr2_dtc",
+	"uri": "dtc/changes-metadata",
+	"collectionName": "fs.files",
+	"primaryKey": "_id"
+},
+{
 	"mongoDbUrl": "mongodb://gitlab.imginconline.com:27017/efr2_dtc",
 	"uri": "dtc/NoInfoPath_FileUploadCache",
 	"collectionName": "NoInfoPath_FileUploadCache",

@@ -86,7 +86,7 @@ function _post(crud, schema, req, res, next) {
 		.then(function (results) {
 			res.statusMessage = "OK";
 			res.statusCode = 200;
-			res.end("ok");
+			res.end(results);
 //			res.send(200, results);
 			console.log("post was successful");
 		})
