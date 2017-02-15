@@ -30,27 +30,31 @@ function _countDocuments(collection, data, filter) {
 }
 CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 
-function _readDocument(collection, data, filter, db) {
-	return collection.find(filter.query, filter.fields, filter.options).toArray()
-		.then(function(data){
-			var retval = {};
-			retval.value = data;
-			if(filter.getTotal) {
-				return _countDocuments(collection, data, filter)
-					.then(function(total){
-						retval["odata.metadata"] = true;
-						retval["odata.count"] = total;
+function _readDocument(payload, data, filter, db) {
+	var bucket = new GridFSBucket(db);
+console.log(data);
+	// var downloadStream = bucket.openDownloadStream()
 
-
-						return retval;
-					});
-			} else {
-				return data;
-			}
-		})
-		.catch(function(err){
-			console.error("CRUD_OPERATIONS.READ", err);
-		});
+	// return collection.find(filter.query, filter.fields, filter.options).toArray()
+	// 	.then(function(data){
+	// 		var retval = {};
+	// 		retval.value = data;
+	// 		if(filter.getTotal) {
+	// 			return _countDocuments(collection, data, filter)
+	// 				.then(function(total){
+	// 					retval["odata.metadata"] = true;
+	// 					retval["odata.count"] = total;
+	//
+	//
+	// 					return retval;
+	// 				});
+	// 		} else {
+	// 			return data;
+	// 		}
+	// 	})
+	// 	.catch(function(err){
+	// 		console.error("CRUD_OPERATIONS.READ", err);
+	// 	});
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
@@ -116,8 +120,8 @@ function MongoConnection(schema, type, data, filter) {
 
 	function executeTransaction(type, data, filter, payload) {
 		//console.log(arguments);
+		console.log(type);
 		console.log("executeTransaction on Grid Store", type);
-
 
 		return CRUD[type](payload, data, filter, _db);
 	}
@@ -126,7 +130,7 @@ function MongoConnection(schema, type, data, filter) {
 
 		return new Promise(function(resolve, reject) {
 
-			console.info("Creating GridStore", collectionName);
+			console.info("Resolving GridStore", collectionName);
 			_db = db;
 
 			var payload = {
@@ -134,9 +138,11 @@ function MongoConnection(schema, type, data, filter) {
 				"metadata": {}
 			};
 
-			for(var i=0; i<schema.columns.length; i++) {
-				var colName = schema.columns[i];
-				payload.metadata[colName] = data[colName];
+			if(data) {
+				for(var i=0; i<schema.columns.length; i++) {
+					var colName = schema.columns[i];
+					payload.metadata[colName] = data[colName];
+				}
 			}
 
 			resolve(payload);

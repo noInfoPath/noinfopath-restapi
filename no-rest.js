@@ -19,7 +19,7 @@ function _error(op, res, err) {
 }
 
 function _get(crud, schema, req, res, next) {
-
+	// console.log("odata", req);
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			console.log(results["odata.metadata"]);

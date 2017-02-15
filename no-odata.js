@@ -14,9 +14,13 @@ module.exports = function() {
 
 
             if (query.$filter) {
-				var t = query.$filter.replace("guid", "");
-                mongoq.query = odataV4.createFilter(t);
+				var t = query.$filter.replace("guid", ""),
+                    q = odataV4.createFilter(t),
+                    stringified = JSON.stringify(q).replace(/_/g, '.'),
+                    converted = JSON.parse(stringified);
 
+
+                mongoq.query = converted;
             }
 
             if (query.$orderby) {
@@ -53,7 +57,7 @@ module.exports = function() {
         }
 
 
-        //console.log("no-odata", req.odata);
+        console.log("no-odata", JSON.stringify(req.odata));
 
     };
 };
