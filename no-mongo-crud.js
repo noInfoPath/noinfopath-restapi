@@ -30,10 +30,11 @@ function _countDocuments(collection, data, filter) {
 CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 
 function _readDocument(collection, data, filter) {
+	console.log("filter", filter);
 	return collection.find(filter.query, filter.fields, filter.options).toArray()
 		.then(function(data){
-			var retval = {}
-			retval.value = data
+			var retval = {};
+			retval.value = data;
 			if(filter.getTotal) {
 				return _countDocuments(collection, data, filter)
 					.then(function(total){

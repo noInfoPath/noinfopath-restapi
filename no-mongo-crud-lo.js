@@ -33,8 +33,8 @@ CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 function _readDocument(collection, data, filter, db) {
 	return collection.find(filter.query, filter.fields, filter.options).toArray()
 		.then(function(data){
-			var retval = {}
-			retval.value = data
+			var retval = {};
+			retval.value = data;
 			if(filter.getTotal) {
 				return _countDocuments(collection, data, filter)
 					.then(function(total){
@@ -59,21 +59,17 @@ function _insertDocument(payload, data, filter, db) {
 		var d = JSON.stringify(data),
 			bucket = new GridFSBucket(db); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
 
-		var stream = require('stream');
-		var rs = new stream.Readable({ objectMode: true });
-		rs.push(JSON.stringify(data));
-
-		var uploadStream = bucket.openUploadStream(data.ChangeID + ".json", payload);
+		var uploadStream = bucket.openUploadStreamWithId(data.ChangeID, data.ChangeID + ".json", payload);
 
 		uploadStream.once("finish", function(err) {
-			resolve(true);
-		})
+			resolve();
+		});
 
 
 		uploadStream.once("error", function(err) {
 			console.error(err);
 			reject(err);
-		})
+		});
 
 		uploadStream.write(d, function(err) {
 			if(err) {
@@ -81,23 +77,12 @@ function _insertDocument(payload, data, filter, db) {
 			} else {
 				console.log("working in write");
 			}
-		})
+		});
 
 		uploadStream.end();
 
 	});
 
-	// return gs.open()
-	// 	.then(function(_gs) {
-	// 		return _gs.write(JSON.stringify(data));
-	// 	})
-	// 	.then(function(data) {
-	// 		return data;
-	// 	})
-	// 	.catch(function(err){
-	// 		console.error("CRUD_OPERATIONS.CREATE", err);
-	// 	})
-		;
 }
 CRUD[CRUD_OPERATIONS.CREATE] = _insertDocument;
 
