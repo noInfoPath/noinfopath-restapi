@@ -31,10 +31,22 @@ function _countDocuments(collection, data, filter) {
 CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 
 function _readDocument(payload, data, filter, db) {
-	var bucket = new GridFSBucket(db);
-console.log(data);
-	// var downloadStream = bucket.openDownloadStream()
+	return new Promise(function(resolve, reject) {
 
+
+		var changeId = filter.query.ChangeID,
+			bucket = new GridFSBucket(db),
+			downloadStream = bucket.openDownloadStream(changeId);
+
+
+		if(downloadStream) {
+			resolve(downloadStream);
+		} else {
+			reject(false);
+		}
+
+
+	});
 	// return collection.find(filter.query, filter.fields, filter.options).toArray()
 	// 	.then(function(data){
 	// 		var retval = {};

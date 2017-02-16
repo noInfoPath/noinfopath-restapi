@@ -39,7 +39,30 @@ function _getOne(crud, schema, req, res, next) {
 	req.odata.query[schema.primaryKey] = req.params.id;
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
-			if(results.length) {
+			if(!!results.pipe) { //checks if results is a stream
+				console.log("Trying to pipe reuslts");
+				results.pipe(res);
+				console.log("after pipe call");
+				// results.on('error', function(err) {
+				// 	console.error(err);
+				// 	res.send(500);
+				// });
+				// var gotData = 0;
+			    // var str = '';
+			    // results.on('data', function(data) {
+			    //   ++gotData;
+			    //   str += data.toString('utf8');
+				//   console.log("DATA!", gotData);
+			    // });
+			    results.on('end', function() {
+					console.log("In the end function");
+			        res.statusMessage = "OK";
+			        res.status = 200;
+			        res.end();
+			    });
+				// 
+				// results.end();
+			} else if(results.length) {
 				res.send(200, results[0]);
 			} else {
 				res.send(404);
@@ -343,11 +366,11 @@ function _getChanges(crud, schema, req, res, next) {
 }
 
 function _configRoute(server, crudProvider, crudProviderLO, schema) {
-	var secret = base64url.decode(config.auth0.secret)
+	var secret = base64url.decode(config.auth0.secret),
 		jwtCheck = jwt({
-		secret: secret,
-		audience: config.auth0.audience
-	}),
+			secret: secret,
+			audience: config.auth0.audience
+		}),
 
 	crudProv = schema.largeObjectHandler ? crudProviderLO : crudProvider;
 
