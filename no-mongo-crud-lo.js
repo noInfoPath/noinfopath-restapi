@@ -33,40 +33,14 @@ CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 function _readDocument(payload, data, filter, db) {
 	return new Promise(function(resolve, reject) {
 
-
 		var changeId = filter.query.ChangeID,
 			bucket = new GridFSBucket(db),
 			downloadStream = bucket.openDownloadStream(changeId);
 
+		downloadStream.db = db;
 
-		if(downloadStream) {
-			resolve(downloadStream);
-		} else {
-			reject(false);
-		}
-
-
+		resolve(downloadStream);
 	});
-	// return collection.find(filter.query, filter.fields, filter.options).toArray()
-	// 	.then(function(data){
-	// 		var retval = {};
-	// 		retval.value = data;
-	// 		if(filter.getTotal) {
-	// 			return _countDocuments(collection, data, filter)
-	// 				.then(function(total){
-	// 					retval["odata.metadata"] = true;
-	// 					retval["odata.count"] = total;
-	//
-	//
-	// 					return retval;
-	// 				});
-	// 		} else {
-	// 			return data;
-	// 		}
-	// 	})
-	// 	.catch(function(err){
-	// 		console.error("CRUD_OPERATIONS.READ", err);
-	// 	});
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
@@ -78,6 +52,7 @@ function _insertDocument(payload, data, filter, db) {
 		var uploadStream = bucket.openUploadStreamWithId(data.ChangeID, data.ChangeID + ".json", payload);
 
 		uploadStream.once("finish", function(err) {
+			db.close();
 			resolve();
 		});
 
@@ -104,18 +79,14 @@ CRUD[CRUD_OPERATIONS.CREATE] = _insertDocument;
 
 function _updateDocument(collection, data, filter, db){
 	//console.log("XXXXXXX", filter);
-	return collection.update(filter, _resolveData(data))
-		.then(function(data){
-			return data;
-		})
-		.catch(function(err){
-			console.error("CRUD_OPERATIONS.UPDATE",err);
-			return err;
-		});
+	return Promise.resolve();
 }
+
 CRUD[CRUD_OPERATIONS.UPDATE] = _updateDocument;
 
 function _deleteDocument(collection, data, filter, db) {
+
+	//remember to close
 	return collection.deleteOne(filter)
 		.then(function(data){
 			return data;
@@ -144,6 +115,7 @@ function MongoConnection(schema, type, data, filter) {
 
 			console.info("Resolving GridStore", collectionName);
 			_db = db;
+
 
 			var payload = {
 				"contentType": "application/json",
@@ -180,8 +152,7 @@ function MongoConnection(schema, type, data, filter) {
 					var m = err.errmsg || JSON.stringify(err);
 					//console.error(m);
 					reject({source: "MongoDB", message: m});
-				})
-				.then(closeConnection);
+				});
 		});
 
 	};

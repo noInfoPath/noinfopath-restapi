@@ -40,28 +40,14 @@ function _getOne(crud, schema, req, res, next) {
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			if(!!results.pipe) { //checks if results is a stream
-				console.log("Trying to pipe reuslts");
-				results.pipe(res);
-				console.log("after pipe call");
-				// results.on('error', function(err) {
-				// 	console.error(err);
-				// 	res.send(500);
-				// });
-				// var gotData = 0;
-			    // var str = '';
-			    // results.on('data', function(data) {
-			    //   ++gotData;
-			    //   str += data.toString('utf8');
-				//   console.log("DATA!", gotData);
-			    // });
-			    results.on('end', function() {
+				res.setHeader('content-type', 'application/json');
+				results.pipe(res).on('finish', function() {
 					console.log("In the end function");
 			        res.statusMessage = "OK";
 			        res.status = 200;
 			        res.end();
+					results.db.close();
 			    });
-				// 
-				// results.end();
 			} else if(results.length) {
 				res.send(200, results[0]);
 			} else {
