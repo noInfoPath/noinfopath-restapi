@@ -19,7 +19,7 @@ function _error(op, res, err) {
 }
 
 function _get(crud, schema, req, res, next) {
-
+	// console.log("odata", req);
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			console.log(results["odata.metadata"]);
@@ -39,7 +39,16 @@ function _getOne(crud, schema, req, res, next) {
 	req.odata.query[schema.primaryKey] = req.params.id;
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
-			if(results.length) {
+			if(!!results.pipe) { //checks if results is a stream
+				res.setHeader('content-type', 'application/json');
+				results.pipe(res).on('finish', function() {
+					console.log("In the end function");
+			        res.statusMessage = "OK";
+			        res.status = 200;
+			        res.end();
+					results.db.close();
+			    });
+			} else if(results.length) {
 				res.send(200, results[0]);
 			} else {
 				res.send(404);
@@ -84,7 +93,11 @@ function _post(crud, schema, req, res, next) {
 
 	crud.execute(schema, crud.operations.CREATE, req.body)
 		.then(function (results) {
-			res.send(200, results);
+			res.statusMessage = "OK";
+			res.statusCode = 200;
+			res.end(results);
+//			res.send(200, results);
+			console.log("post was successful");
 		})
 		.catch(_error.bind(null, "POST", res))
 		.then(function () {
@@ -338,25 +351,27 @@ function _getChanges(crud, schema, req, res, next) {
 
 }
 
-function _configRoute(server, crudProvider, schema) {
-	var secret = base64url.decode(config.auth0.secret)
+function _configRoute(server, crudProvider, crudProviderLO, schema) {
+	var secret = base64url.decode(config.auth0.secret),
 		jwtCheck = jwt({
-		secret: secret,
-		audience: config.auth0.audience
-	});
+			secret: secret,
+			audience: config.auth0.audience
+		}),
+
+	crudProv = schema.largeObjectHandler ? crudProviderLO : crudProvider;
 
 	console.log("Configuring route ", schema.uri);
-	server.get(schema.uri, jwtCheck, _get.bind(null, crudProvider, schema));
-	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProvider, schema));
-	server.put(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProvider, schema));
-	server.patch(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProvider, schema));
-	server.del(schema.uri + "/:id", jwtCheck, _delete.bind(null, crudProvider, schema));
-	server.post(schema.uri, jwtCheck, _post.bind(null, crudProvider, schema));
+	server.get(schema.uri, jwtCheck, _get.bind(null, crudProv, schema));
+	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProv, schema));
+	server.put(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
+	server.patch(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
+	server.del(schema.uri + "/:id", jwtCheck, _delete.bind(null, crudProv, schema));
+	server.post(schema.uri, jwtCheck, _post.bind(null, crudProv, schema));
 
 	if(schema.versionUri) server.get(schema.versionUri, jwtCheck, _checkVersion.bind(null, crudProvider, schema));
 	if(schema.changesUri) server.get(schema.changesUri + "/:version", jwtCheck, _getChanges.bind(null, crudProvider, schema));
 }
 
-module.exports = function (server, crudProvider, schemas) {
-	schemas.forEach(_configRoute.bind(null, server, crudProvider));
+module.exports = function (server, crudProvider, crudProviderLO, schemas) {
+	schemas.forEach(_configRoute.bind(null, server, crudProvider, crudProviderLO));
 };

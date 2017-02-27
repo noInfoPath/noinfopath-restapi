@@ -1,0 +1,171 @@
+var config = require("./config"),
+	MongoClient = require('mongodb').MongoClient,
+	GridStore = require('mongodb').GridStore,
+	GridFSBucket = require('mongodb').GridFSBucket,
+	CRUD = {},
+	CRUD_OPERATIONS = {
+		"CREATE": "create",
+		"READ": "read",
+		"UPDATE": "update",
+		"DELETE": "delete",
+		"COUNT": "count"
+	}
+;
+
+function _resolveData(indata) {
+	var d = indata;
+	if(typeof(d) === "string") {
+		d = JSON.parse(d);
+	}
+	return d;
+}
+
+function _countDocuments(collection, data, filter) {
+
+	return collection.count(filter.query)
+		.then(function(data){
+			//console.log(data);
+			return data;
+		});
+}
+CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
+
+function _readDocument(payload, data, filter, db) {
+	return new Promise(function(resolve, reject) {
+
+		var changeId = filter.query.ChangeID,
+			bucket = new GridFSBucket(db),
+			downloadStream = bucket.openDownloadStream(changeId);
+
+		downloadStream.db = db;
+
+		resolve(downloadStream);
+	});
+}
+CRUD[CRUD_OPERATIONS.READ] = _readDocument;
+
+function _insertDocument(payload, data, filter, db) {
+	return new Promise(function(resolve, reject) {
+		var d = JSON.stringify(data),
+			bucket = new GridFSBucket(db); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
+
+		var uploadStream = bucket.openUploadStreamWithId(data.ChangeID, data.ChangeID + ".json", payload);
+
+		uploadStream.once("finish", function(err) {
+			db.close();
+			resolve();
+		});
+
+
+		uploadStream.once("error", function(err) {
+			console.error(err);
+			reject(err);
+		});
+
+		uploadStream.write(d, function(err) {
+			if(err) {
+				console.error(err);
+			} else {
+				console.log("working in write");
+			}
+		});
+
+		uploadStream.end();
+
+	});
+
+}
+CRUD[CRUD_OPERATIONS.CREATE] = _insertDocument;
+
+function _updateDocument(collection, data, filter, db){
+	//console.log("XXXXXXX", filter);
+	return Promise.resolve();
+}
+
+CRUD[CRUD_OPERATIONS.UPDATE] = _updateDocument;
+
+function _deleteDocument(collection, data, filter, db) {
+
+	//remember to close
+	return collection.deleteOne(filter)
+		.then(function(data){
+			return data;
+		})
+		.catch(function(err){
+			console.error("CRUD_OPERATIONS.DELETE",err);
+			return err;
+		});
+}
+CRUD[CRUD_OPERATIONS.DELETE] = _deleteDocument;
+
+function MongoConnection(schema, type, data, filter) {
+	var _db;
+
+	function executeTransaction(type, data, filter, payload) {
+		//console.log(arguments);
+		console.log(type);
+		console.log("executeTransaction on Grid Store", type);
+
+		return CRUD[type](payload, data, filter, _db);
+	}
+
+	function resolveGridStoreMetadata(collectionName, schema, data, db) {
+
+		return new Promise(function(resolve, reject) {
+
+			console.info("Resolving GridStore", collectionName);
+			_db = db;
+
+
+			var payload = {
+				"contentType": "application/json",
+				"metadata": {}
+			};
+
+			if(data) {
+				for(var i=0; i<schema.columns.length; i++) {
+					var colName = schema.columns[i];
+					payload.metadata[colName] = data[colName];
+				}
+			}
+
+			resolve(payload);
+
+		});
+
+	}
+
+	function closeConnection(){
+		if(_db)
+			_db.close();
+		//console.info("Connection closed ", schema.collectionName);
+	}
+
+	this.run = function(){
+		return new Promise(function(resolve, reject) {
+
+			MongoClient.connect(schema.mongoDbUrl)
+				.then(resolveGridStoreMetadata.bind(null, schema.collectionName, schema, data))
+				.then(executeTransaction.bind(null, type, data, filter))
+				.then(resolve)
+				.catch(function(err) {
+					var m = err.errmsg || JSON.stringify(err);
+					//console.error(m);
+					reject({source: "MongoDB", message: m});
+				});
+		});
+
+	};
+
+}
+
+function beginMongoTransaction(schema, type, data, filter) {
+	var mc = new MongoConnection(schema, type, data, filter);
+
+	return mc.run();
+}
+
+module.exports = {
+	execute: beginMongoTransaction,
+	operations: CRUD_OPERATIONS
+};
