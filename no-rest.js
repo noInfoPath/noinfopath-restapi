@@ -22,9 +22,16 @@ function _get(crud, schema, req, res, next) {
 	// console.log("odata", req);
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
-			console.log(results["odata.metadata"]);
 			if(results.length || results["odata.metadata"]) {
 				res.send(200, results);
+			} else if(results.pipe) {
+				res.setHeader('content-type', 'application/json');
+				results.pipe(res).on('finish', function() {				
+			        res.statusMessage = "OK";
+			        res.status = 200;
+			        res.end();
+					results.db.close();
+			    });
 			} else {
 				res.send(404);
 			}
@@ -87,12 +94,13 @@ function _putByPrimaryKey(crud, schema, req, res, next) {
 
 function _post(crud, schema, req, res, next) {
 	//console.log(req.body);
-	console.log("POST", req.url);
+	console.log("POST", req.url, "crud.type", crud.type);
 	//console.log("POST", req.headers);
 	req.body._id = req.body[schema.primaryKey];
 
 	crud.execute(schema, crud.operations.CREATE, req.body)
 		.then(function (results) {
+			console.log(results);
 			res.statusMessage = "OK";
 			res.statusCode = 200;
 			res.end(results);

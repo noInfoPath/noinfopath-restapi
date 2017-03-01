@@ -3,20 +3,22 @@
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID",
-	"largeObjectHandler": true,
+	"largeObjectHandler": {"fileName": "ChangeID"},
 	"columns": ["ChangeID", "CreatedBy", "DateCreated", "ModifiedBy", "ModifiedDate", "namespace", "state", "timestamp", "transactionId", "userId"]
 },
 {
 	"mongoDbUrl": "~NIP_MONGO_HOST~/efr2_dtc",
 	"uri": "dtc/changes-metadata",
-	"collectionName": "fs.files",
+	"collectionName": "changes.files",
 	"primaryKey": "_id"
 },
 {
 	"mongoDbUrl": "~NIP_MONGO_HOST~/efr2_dtc",
 	"uri": "dtc/NoInfoPath_FileUploadCache",
 	"collectionName": "NoInfoPath_FileUploadCache",
-	"primaryKey": "FileID"
+	"largeObjectHandler": {"fileName": "name"},
+	"primaryKey": "FileID",
+	"columns": ["CreatedBy", "DateCreated", "FileID", "ModifiedBy", "ModifiedDate", "name", "size", "type"]
 },{
 	"mongoDbUrl": "~NIP_MONGO_HOST~/efr2_dtc",
 	"uri": "dtc/log",

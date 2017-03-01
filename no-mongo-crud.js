@@ -139,6 +139,7 @@ function beginMongoTransaction(schema, type, data, filter) {
 }
 
 module.exports = {
+	type: "CRUD",
 	execute: beginMongoTransaction,
 	operations: CRUD_OPERATIONS
 };

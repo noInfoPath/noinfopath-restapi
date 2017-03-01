@@ -31,11 +31,13 @@ function _countDocuments(collection, data, filter) {
 CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 
 function _readDocument(payload, data, filter, db) {
+	var schema = this;
+	console.log("_readDocument", filter);
 	return new Promise(function(resolve, reject) {
 
-		var changeId = filter.query.ChangeID,
-			bucket = new GridFSBucket(db),
-			downloadStream = bucket.openDownloadStream(changeId);
+		var pkid = filter.query[schema.primaryKey],
+			bucket = new GridFSBucket(db, {bucketName: schema.collectionName}),
+			downloadStream = bucket.openDownloadStream(pkid);
 
 		downloadStream.db = db;
 
@@ -45,11 +47,13 @@ function _readDocument(payload, data, filter, db) {
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
 function _insertDocument(payload, data, filter, db) {
+	var schema = this;
+	console.log("_insertDocument", schema);
 	return new Promise(function(resolve, reject) {
 		var d = JSON.stringify(data),
-			bucket = new GridFSBucket(db); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
+			bucket = new GridFSBucket(db, {bucketName: schema.collectionName}); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
 
-		var uploadStream = bucket.openUploadStreamWithId(data.ChangeID, data.ChangeID + ".json", payload);
+		var uploadStream = bucket.openUploadStreamWithId(data[schema.primaryKey], data[schema.largeObjectHandler.fileName] + ".json", payload);
 
 		uploadStream.once("finish", function(err) {
 			db.close();
@@ -85,7 +89,7 @@ function _updateDocument(collection, data, filter, db){
 CRUD[CRUD_OPERATIONS.UPDATE] = _updateDocument;
 
 function _deleteDocument(collection, data, filter, db) {
-
+	var schema = this;
 	//remember to close
 	return collection.deleteOne(filter)
 		.then(function(data){
@@ -106,7 +110,7 @@ function MongoConnection(schema, type, data, filter) {
 		console.log(type);
 		console.log("executeTransaction on Grid Store", type);
 
-		return CRUD[type](payload, data, filter, _db);
+		return CRUD[type].call(this, payload, data, filter, _db);
 	}
 
 	function resolveGridStoreMetadata(collectionName, schema, data, db) {
@@ -145,8 +149,8 @@ function MongoConnection(schema, type, data, filter) {
 		return new Promise(function(resolve, reject) {
 
 			MongoClient.connect(schema.mongoDbUrl)
-				.then(resolveGridStoreMetadata.bind(null, schema.collectionName, schema, data))
-				.then(executeTransaction.bind(null, type, data, filter))
+				.then(resolveGridStoreMetadata.bind(schema, schema.collectionName, schema, data))
+				.then(executeTransaction.bind(schema, type, data, filter))
 				.then(resolve)
 				.catch(function(err) {
 					var m = err.errmsg || JSON.stringify(err);
@@ -166,6 +170,7 @@ function beginMongoTransaction(schema, type, data, filter) {
 }
 
 module.exports = {
+	type: "CRUD-LO",
 	execute: beginMongoTransaction,
 	operations: CRUD_OPERATIONS
 };
