@@ -88,17 +88,19 @@ function _updateDocument(collection, data, filter, db){
 
 CRUD[CRUD_OPERATIONS.UPDATE] = _updateDocument;
 
-function _deleteDocument(collection, data, filter, db) {
+function _deleteDocument(payload, data, filter, db) {
 	var schema = this;
 	//remember to close
-	return collection.deleteOne(filter)
-		.then(function(data){
-			return data;
-		})
-		.catch(function(err){
-			console.error("CRUD_OPERATIONS.DELETE",err);
-			return err;
+
+	console.log("_deleteDocument", filter);
+	var pkid = filter,
+		bucket = new GridFSBucket(db, { bucketName: schema.collectionName });
+
+	return bucket.delete(pkid)
+		.then(function() {
+			db.close();
 		});
+
 }
 CRUD[CRUD_OPERATIONS.DELETE] = _deleteDocument;
 
