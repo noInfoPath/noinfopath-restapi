@@ -62,6 +62,7 @@ function _insertDocument(payload, data, filter, db) {
 
 
 		uploadStream.once("error", function(err) {
+			db.close();
 			console.error(err);
 			reject(err);
 		});
