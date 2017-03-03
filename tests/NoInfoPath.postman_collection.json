@@ -1,0 +1,223 @@
+{
+	"variables": [],
+	"info": {
+		"name": "NoInfoPath",
+		"_postman_id": "941259fb-ae6d-0a1b-9892-a6ffd153ba22",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://auth.noinfopath.net/token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Body has bearer token\"] = responseBody.has(\"access_token\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://auth.noinfopath.net/token",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "username",
+							"value": "jeff@gochin.com",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "password",
+							"value": "#1@Test",
+							"type": "text",
+							"enabled": true
+						},
+						{
+							"key": "",
+							"value": "",
+							"type": "text",
+							"enabled": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Changes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var guids = [\"f700bc05-3435-448b-ba5e-d8e304b6b11f\",\"b6b52ca4-b1a4-4dbd-811d-7450b4eb2030\",\"d33ed684-34ef-479c-83ec-a559d14d9c6e\",\"4cdcbc2c-e80d-445d-8bf0-43e10e61560e\",\"9050174a-fca5-4812-ad79-b2976157e977\",\"5b784412-8c72-43c3-97d1-c7546abdd11b\",\"fb02a895-8522-43fc-931e-a3778a961644\",\"f02982c4-2089-4fd2-b152-7ba9842b0183\",\"36a98f14-f529-4be3-b27d-36d5ff3cad54\",\"66bd1a3b-0359-4d5b-9ca0-56f3f776f168\",\"3be18b4b-e6fd-4403-96f1-e210a275ef16\",\"9750c551-53a4-4249-a4c9-dddb0bf50c1e\",\"87e6c60e-0ded-4963-b38d-f8028aabc7b3\",\"e4e671fe-f8f4-4ad8-aba6-4ce7917ef347\",\"2c788a00-e10b-4d43-a46a-875bd232d082\",\"f9c91200-9617-4074-9451-901502a0f2ca\",\"22c986b6-0bc8-4bf2-832b-8523bce22ae5\",\"4eb60149-8153-4930-8ff6-32ea482dbe26\",\"6b53f301-42ef-4e58-bb1d-7312b8e10a2c\",\"a534451c-9b74-4d2a-93e0-01b241712a97\"];",
+							"",
+							"",
+							"",
+							"postman.setGlobalVariable(\"guid\", JSON.parse(request.data).ChangeID);"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/dtc/changes",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1laWQiOiIxZTMxMjFiZi03MTY0LTQxYzAtYTU4NS0wNmVmNDBhNmU5MjUiLCJ1bmlxdWVfbmFtZSI6ImplZmZAZ29jaGluLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYWNjZXNzY29udHJvbHNlcnZpY2UvMjAxMC8wNy9jbGFpbXMvaWRlbnRpdHlwcm92aWRlciI6IkFTUC5ORVQgSWRlbnRpdHkiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6ImZiYWIyOGM3LWRkNTEtNDJiMS04YzI1LWQwMWQxZWVhMjY4MyIsImlzcyI6IkVGUjIiLCJhdWQiOiJ2TzZtWVJJQWxkeXc3R1A2RlVXMFdndlUzMnBGWUQ2eCIsImV4cCI6MTQ4OTYxMzAwOCwibmJmIjoxNDg4NDAzNDA4fQ.LxfiH2tMyrH_ZAilNzNiT5Z310_8ED4NbFQFFBJOGpo",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"ChangeID\": \"f700bc05-3435-448b-ba5e-d8e304b6b11f\",\n\"CreatedBy\": \"1e3121bf-7164-41c0-a585-06ef40a6e925\",\n\"DateCreated\": \"2017-02-11T02:15:13.1313\",\n\"ModifiedBy\": \"1e3121bf-7164-41c0-a585-06ef40a6e925\",\n\"ModifiedDate\": \"2017-02-11T02:15:13.1313\",\n\"namespace\": \"rmEFR2\",\n\"changes\": [],\n\"state\": \"error\",\n\"timestamp\": \"2017-02-11T02:15:12.844Z\",\n\"transactionId\": \"a5efc987-b41c-4f7a-c7e5-6b205e3bda41\",\n\"userId\": \"1e3121bf-7164-41c0-a585-06ef40a6e925\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Changes-Metadata",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"JSON data has chunk size\"] = !!jsonData.chunkSize;",
+							"tests[\"JSON data has filename\"] = !!jsonData.filename;",
+							"tests[\"Change ID is same as _id\"] = jsonData._id === jsonData.metadata.ChangeID;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/dtc/changes-metadata/{{guid}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1laWQiOiIxZTMxMjFiZi03MTY0LTQxYzAtYTU4NS0wNmVmNDBhNmU5MjUiLCJ1bmlxdWVfbmFtZSI6ImplZmZAZ29jaGluLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYWNjZXNzY29udHJvbHNlcnZpY2UvMjAxMC8wNy9jbGFpbXMvaWRlbnRpdHlwcm92aWRlciI6IkFTUC5ORVQgSWRlbnRpdHkiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6ImZiYWIyOGM3LWRkNTEtNDJiMS04YzI1LWQwMWQxZWVhMjY4MyIsImlzcyI6IkVGUjIiLCJhdWQiOiJ2TzZtWVJJQWxkeXc3R1A2RlVXMFdndlUzMnBGWUQ2eCIsImV4cCI6MTQ4OTYxMzAwOCwibmJmIjoxNDg4NDAzNDA4fQ.LxfiH2tMyrH_ZAilNzNiT5Z310_8ED4NbFQFFBJOGpo",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Changes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/dtc/changes/{{guid}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1laWQiOiIxZTMxMjFiZi03MTY0LTQxYzAtYTU4NS0wNmVmNDBhNmU5MjUiLCJ1bmlxdWVfbmFtZSI6ImplZmZAZ29jaGluLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYWNjZXNzY29udHJvbHNlcnZpY2UvMjAxMC8wNy9jbGFpbXMvaWRlbnRpdHlwcm92aWRlciI6IkFTUC5ORVQgSWRlbnRpdHkiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6ImZiYWIyOGM3LWRkNTEtNDJiMS04YzI1LWQwMWQxZWVhMjY4MyIsImlzcyI6IkVGUjIiLCJhdWQiOiJ2TzZtWVJJQWxkeXc3R1A2RlVXMFdndlUzMnBGWUQ2eCIsImV4cCI6MTQ4OTYxMzAwOCwibmJmIjoxNDg4NDAzNDA4fQ.LxfiH2tMyrH_ZAilNzNiT5Z310_8ED4NbFQFFBJOGpo",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Changes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://localhost:4000/dtc/changes/{{guid}}",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJuYW1laWQiOiIxZTMxMjFiZi03MTY0LTQxYzAtYTU4NS0wNmVmNDBhNmU5MjUiLCJ1bmlxdWVfbmFtZSI6ImplZmZAZ29jaGluLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vYWNjZXNzY29udHJvbHNlcnZpY2UvMjAxMC8wNy9jbGFpbXMvaWRlbnRpdHlwcm92aWRlciI6IkFTUC5ORVQgSWRlbnRpdHkiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6ImZiYWIyOGM3LWRkNTEtNDJiMS04YzI1LWQwMWQxZWVhMjY4MyIsImlzcyI6IkVGUjIiLCJhdWQiOiJ2TzZtWVJJQWxkeXc3R1A2RlVXMFdndlUzMnBGWUQ2eCIsImV4cCI6MTQ4OTYxMzAwOCwibmJmIjoxNDg4NDAzNDA4fQ.LxfiH2tMyrH_ZAilNzNiT5Z310_8ED4NbFQFFBJOGpo",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
