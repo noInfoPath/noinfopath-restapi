@@ -39,7 +39,16 @@ function _readDocument(payload, req, filter) {
 			path = schema.folderName + filter.query[schema.primaryKey],
 			file = bucket.file(path);
 
+		// file.getMetadata().then(function (data) {
+		// 	var metadata = data[0];
+		// 	var apiResponse = data[1];
+		//
+		// 	console.log(data);
+		//
+		// });
 		resolve(file.createReadStream());
+
+
 	});
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
@@ -113,7 +122,7 @@ function GCSConnection(schema, type, data, filter) {
 					},
 					data;
 
-				if(req) {
+				if (req) {
 					data = req.body;
 					payload.metadata.contentType = req.contentType();
 				}
