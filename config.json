@@ -36,6 +36,11 @@
 			}]
 		}
 
+	},
+	"googleApis": {
+		"gcs": {
+			"projectId": "noinfopath-141618",
+			"keyFilename": "noinfopath-9bb0a83edb7f.json"
+		}
 	}
-
 }

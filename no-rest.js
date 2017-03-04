@@ -9,24 +9,45 @@ var mongodb = require("mongodb"),
 		"u": "U",
 		"d": "D"
 	},
+	storageTypes = {
+		"mgfsb": "./no-mongo-crud-lo",
+		"gcs": "./no-gcs-crud",
+		"awss3": "./no-awss3-crud"
+	},
 	base64url = require("base64url");
 
+	/*
+	*	## POST (Create) Handler
+	*
+	*	### Storage Types
+	*
+	*	Currently supported storage types are Amazon AWS (aws),
+	*	Google Clound storage (gcs) and MongoDB GridFSBucket (mgfsb).
+	*/
+
+function _isBucketStorage(storageType) {
+	return !!storageTypes[storageType];
+}
+
 function _error(op, res, err) {
-	console.error(op, "ERROR", err);
-	res.statusMessage = JSON.stringify(err);
+
+	console.error(err);
+	res.statusMessage = "MESSAGE: " +  err.message + " SOURCE: " + err.source;
 	res.statusCode = 500;
 	res.send(500);
 }
 
 function _get(crud, schema, req, res, next) {
 	// console.log("odata", req);
+
+
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			if(results.length || results["odata.metadata"]) {
 				res.send(200, results);
 			} else if(results.pipe) {
 				res.setHeader('content-type', 'application/json');
-				results.pipe(res).on('finish', function() {				
+				results.pipe(res).on('finish', function() {
 			        res.statusMessage = "OK";
 			        res.status = 200;
 			        res.end();
@@ -43,13 +64,13 @@ function _get(crud, schema, req, res, next) {
 }
 
 function _getOne(crud, schema, req, res, next) {
+	console.log("IsStream", !!req.pipe);
 	req.odata.query[schema.primaryKey] = req.params.id;
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			if(!!results.pipe) { //checks if results is a stream
-				res.setHeader('content-type', 'application/json');
+				//res.setHeader('content-type', 'application/json');
 				results.pipe(res).on('finish', function() {
-					console.log("In the end function");
 			        res.statusMessage = "OK";
 			        res.status = 200;
 			        res.end();
@@ -69,6 +90,7 @@ function _getOne(crud, schema, req, res, next) {
 }
 
 function _putByPrimaryKey(crud, schema, req, res, next) {
+	console.log("_putByPrimaryKey", crud.type);
 	var routeID = req.params.id,
 		filter = {},
 		b = typeof (req.body) === "string" ? JSON.parse(req.body) : req.body;
@@ -93,18 +115,20 @@ function _putByPrimaryKey(crud, schema, req, res, next) {
 }
 
 function _post(crud, schema, req, res, next) {
+	var data = _isBucketStorage(schema.storageType) ? req : req.body;
+
 	//console.log(req.body);
 	console.log("POST", req.url, "crud.type", crud.type);
 	//console.log("POST", req.headers);
 	req.body._id = req.body[schema.primaryKey];
 
-	crud.execute(schema, crud.operations.CREATE, req.body)
+	crud.execute(schema, crud.operations.CREATE, data)
 		.then(function (results) {
 			console.log(results);
 			res.statusMessage = "OK";
 			res.statusCode = 200;
 			res.end(results);
-//			res.send(200, results);
+			//			res.send(200, results);
 			console.log("post was successful");
 		})
 		.catch(_error.bind(null, "POST", res))
@@ -359,17 +383,18 @@ function _getChanges(crud, schema, req, res, next) {
 
 }
 
-function _configRoute(server, crudProvider, crudProviderLO, schema) {
+function _configRoute(server, crudProvider, schema) {
 	var secret = base64url.decode(config.auth0.secret),
 		jwtCheck = jwt({
 			secret: secret,
 			audience: config.auth0.audience
 		}),
+		storageType = storageTypes[schema.storageType],
+		crudProv = !!storageType ? require(storageType) : crudProvider;
 
-	crudProv = schema.largeObjectHandler ? crudProviderLO : crudProvider;
-
-	console.log("Configuring route ", schema.uri);
+	console.log("Configuring route ", schema.uri, "as Storage Type", storageType || "Mongo Collection");
 	server.get(schema.uri, jwtCheck, _get.bind(null, crudProv, schema));
+	//server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProv, schema));
 	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProv, schema));
 	server.put(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
 	server.patch(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
@@ -380,6 +405,6 @@ function _configRoute(server, crudProvider, crudProviderLO, schema) {
 	if(schema.changesUri) server.get(schema.changesUri + "/:version", jwtCheck, _getChanges.bind(null, crudProvider, schema));
 }
 
-module.exports = function (server, crudProvider, crudProviderLO, schemas) {
-	schemas.forEach(_configRoute.bind(null, server, crudProvider, crudProviderLO));
+module.exports = function (server, crudProvider, schemas) {
+	schemas.forEach(_configRoute.bind(null, server, crudProvider));
 };

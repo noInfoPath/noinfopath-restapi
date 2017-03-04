@@ -48,7 +48,7 @@ CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
 function _insertDocument(payload, data, filter, db) {
 	var schema = this;
-	console.log("_insertDocument", schema);
+	console.log("_insertDocument", schema.primaryKey, data[schema.primaryKey], schema.largeObjectHandler.fileName, data[schema.largeObjectHandler.fileName]);
 	return new Promise(function(resolve, reject) {
 		var d = JSON.stringify(data),
 			bucket = new GridFSBucket(db, {bucketName: schema.collectionName}); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
@@ -110,7 +110,6 @@ function MongoConnection(schema, type, data, filter) {
 
 	function executeTransaction(type, data, filter, payload) {
 		//console.log(arguments);
-		console.log(type);
 		console.log("executeTransaction on Grid Store", type);
 
 		return CRUD[type].call(this, payload, data, filter, _db);

@@ -6,8 +6,7 @@ var noLibs = require('@noinfopath/noinfopath-node-libraries'),
     schemas = require("./no-schemas")(),
     noREST = require("./no-rest"),
     server = restify.createServer(),
-    base64url = require("base64url"),
-    crudLO = require("./no-mongo-crud-lo");
+    base64url = require("base64url")
 
 function corsHandler(req, res, next) {
 
@@ -55,7 +54,7 @@ server.use(restify.bodyParser());
 
 server.use(odataParser());
 
-noREST(server, crud, crudLO, schemas);
+noREST(server, crud, schemas);
 
 server.opts('/\.*/', corsHandler, optionsRoute);
 

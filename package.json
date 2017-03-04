@@ -1,6 +1,6 @@
 {
   "name": "@noinfopath/noinfopath-restapi",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/storage": "^0.7.0",
     "@noinfopath/noinfopath-node-libraries": ">2.0.0",
     "base64url": "^2.0.0",
     "es6-promise": "^3.2.1",
