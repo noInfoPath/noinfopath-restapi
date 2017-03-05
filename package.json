@@ -1,23 +1,24 @@
 {
-  "name": "@noinfopath/noinfopath-restapi",
-  "version": "2.0.11",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "@google-cloud/storage": "^0.7.0",
-    "@noinfopath/noinfopath-node-libraries": ">2.0.0",
-    "base64url": "^2.0.0",
-    "es6-promise": "^3.2.1",
-    "mongo": "^0.1.0",
-    "mongodb": "^2.2.1",
-    "noinfopath-bson-timestamp": "^1.0.0",
-    "odata-v4-mongodb": "^0.1.9",
-    "restify": "^4.1.1",
-    "restify-jwt": "^0.4.0"
-  }
+	"name": "@noinfopath/noinfopath-restapi",
+	"version": "2.0.11",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"@google-cloud/storage": "^0.7.0",
+		"@noinfopath/noinfopath-node-libraries": ">2.0.0",
+		"aws-sdk": "^2.22.0",
+		"base64url": "^2.0.0",
+		"es6-promise": "^3.2.1",
+		"mongo": "^0.1.0",
+		"mongodb": "^2.2.1",
+		"noinfopath-bson-timestamp": "^1.0.0",
+		"odata-v4-mongodb": "^0.1.9",
+		"restify": "^4.1.1",
+		"restify-jwt": "^0.4.0"
+	}
 }

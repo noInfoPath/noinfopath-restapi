@@ -1,30 +1,55 @@
-[{
-	"storageType": "mgfsb",
-	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
-	"uri": "dtc/changes",
-	"collectionName": "changes",
-	"primaryKey": "ChangeID",
-	"largeObjectHandler": {"fileName": "ChangeID"},
-	"columns": ["ChangeID", "CreatedBy", "DateCreated", "ModifiedBy", "ModifiedDate", "namespace", "state", "timestamp", "transactionId", "userId"]
-},
-{
-	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
-	"uri": "dtc/changes-metadata",
-	"collectionName": "changes.files",
-	"primaryKey": "_id"
-},
-{
-	"storageType": "gcs",
-	"uri": "dtc/NoInfoPath_FileUploadCache",
-	"bucketName": "file_cache.noinfopath.net",
-	"folderName": "rm-efr2-test/",
-	"fileNameProperty": "name",
-	"primaryKey": "FileID",
-	"metadata": ["CreatedBy", "DateCreated", "FileID", "ModifiedBy", "ModifiedDate", "name", "size", "type"]
-},
-{
-	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
-	"uri": "dtc/log",
-	"collectionName": "logs",
-	"primaryKey": "_id"
-}]
+[
+	{
+		"storageType": "mgfsb",
+		"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
+		"uri": "dtc/changes",
+		"collectionName": "changes",
+		"primaryKey": "ChangeID",
+		"largeObjectHandler": {
+			"fileName": "ChangeID"
+		},
+		"columns": [
+            "ChangeID",
+            "CreatedBy",
+            "DateCreated",
+            "ModifiedBy",
+            "ModifiedDate",
+            "namespace",
+            "state",
+            "timestamp",
+            "transactionId",
+            "userId"
+        ]
+    },
+	{
+		"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
+		"uri": "dtc/changes-metadata",
+		"collectionName": "changes.files",
+		"primaryKey": "_id"
+    },
+	{
+		"storageType": "awss3",
+		"uri": "dtc/NoInfoPath_FileUploadCache",
+		"bucketName": "file-cache.noinfopath.net",
+		"folderName": "rm-efr2-test/",
+		"fileNameProperty": "name",
+		"primaryKey": "FileID",
+		"metadata": [
+            "CreatedBy",
+            "DateCreated",
+            "FileID",
+            "ModifiedBy",
+            "ModifiedDate",
+            "name",
+            "size",
+            "type"
+        ],
+		"contentType": "application/json"
+    },
+	{
+		"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
+		"uri": "dtc/log",
+		"collectionName": "logs",
+		"primaryKey": "_id"
+    }
+]

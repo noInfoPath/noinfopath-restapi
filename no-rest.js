@@ -69,13 +69,17 @@ function _getOne(crud, schema, req, res, next) {
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
 			if(!!results.pipe) { //checks if results is a stream
-				//res.setHeader('content-type', 'application/json');
+				if(schema.contentType) res.setHeader('content-type', schema.contentType);
+
 				results.pipe(res).on('finish', function() {
 			        res.statusMessage = "OK";
 			        res.status = 200;
 			        res.end();
-					results.db.close();
-			    });
+					if(!!results.db) results.db.close();
+			    }).on("error", function(err){
+					res.send(500, err);
+
+				});
 			} else if(results.length) {
 				res.send(200, results[0]);
 			} else {
@@ -120,7 +124,7 @@ function _post(crud, schema, req, res, next) {
 	//console.log(req.body);
 	console.log("POST", req.url, "crud.type", crud.type);
 	//console.log("POST", req.headers);
-	req.body._id = req.body[schema.primaryKey];
+	if(!!req.body[schema.primaryKey]) req.body._id = req.body[schema.primaryKey];
 
 	crud.execute(schema, crud.operations.CREATE, data)
 		.then(function (results) {
