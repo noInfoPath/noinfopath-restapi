@@ -44,45 +44,6 @@ The primary configuration property is `storageType`. It defines which CRUD (Crea
 |Google Cloud Storage|Bucket|gcs|This provider is used to expose a Google Cloud Storage Bucket.|
 |Amazon Web Services S3|Bucket|awss3|This provider is used to expose an AWS S3 Bucket.|
 
-#### Example Route Configuration
-```json
-	{
-		"storageType": "gcs",
-		"uri": "dtc/NoInfoPath_FileUploadCache",
-		"bucketName": "file_cache.noinfopath.net",
-		"folderName": "rm-efr2-test/",
-		"fileNameProperty": "name",
-		"primaryKey": "FileID",
-		"metadata": ["CreatedBy", "DateCreated", "FileID", "ModifiedBy", "ModifiedDate", "name", "size", "type"],
-		"ContentType": "application/json"
-	}
-	{
-		"storageType": "awss3",
-		"uri": "dtc/NoInfoPath_FileUploadCache",
-		"bucketName": "file-cache.noinfopath.net",
-		"folderName": "rm-efr2-test/",
-		"fileNameProperty": "name",
-		"primaryKey": "FileID",
-		"metadata": [
-			"CreatedBy",
-			"DateCreated",
-			"FileID",
-			"ModifiedBy",
-			"ModifiedDate",
-			"name",
-			"size",
-			"type"
-		],
-		"contentType": "application/json"
-	},
-	{
-		"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
-		"uri": "dtc/log",
-		"collectionName": "logs",
-		"primaryKey": "_id"
-    }
-]
-```
 
 
 CRUD Provider Configuration

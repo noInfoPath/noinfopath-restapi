@@ -1,62 +1,62 @@
 var odataV4 = require("odata-v4-mongodb"),
-    querystring = require("querystring");
+	querystring = require("querystring");
 
-module.exports = function() {
-    return function(req, res, next) {
-        try {
+module.exports = function () {
+	return function (req, res, next) {
+		try {
 
-            var query = req.query,
-                mongoq = {
-                    query: {},
-                    options: {}
-                };
+			var query = req.query,
+				mongoq = {
+					query: {},
+					options: {}
+				};
 
 
 
-            if (query.$filter) {
+			if (query.$filter) {
 				var t = query.$filter.replace("guid", ""),
-                    q = odataV4.createFilter(t),
-                    stringified = JSON.stringify(q).replace(/_/g, '.');
+					q = odataV4.createFilter(t),
+					stringified = JSON.stringify(q).replace(/_/g, '.');
 
 
-                mongoq.query = JSON.parse(stringified);
-            }
+				mongoq.query = JSON.parse(stringified);
+			}
 
-            if (query.$orderby) {
+			if (query.$orderby) {
 				var sorts = query.$orderby.split(",");
-				for(var s=0; s < sorts.length; s++) {
+				for (var s = 0; s < sorts.length; s++) {
 					var parts = sorts[s].split(" ");
-					if(parts.length < 2) {
+					if (parts.length < 2) {
 						parts.push("asc");
 					}
 
 					sorts[s] = parts;
 				}
 
-                mongoq.options.sort = sorts;
+				mongoq.options.sort = sorts;
 
-            }
+			}
 
-            if (query.$top) {
-                mongoq.options.limit = Number(query.$top);
-            }
+			if (query.$top) {
+				mongoq.options.limit = Number(query.$top);
+			}
 
-            if (query.$skip) {
-                mongoq.options.skip = Number(query.$skip);
-            }
+			if (query.$skip) {
+				mongoq.options.skip = Number(query.$skip);
+			}
 
-			if(query.$inlinecount) {
+			if (query.$inlinecount) {
 				mongoq.getTotal = true;
 			}
-            req.odata = mongoq;
+			req.odata = mongoq;
 
 			next();
-        } catch (err) {
+		} catch (err) {
 			next(err);
-        }
+		}
 
 
-        console.log("no-odata", JSON.stringify(req.odata));
+		console.log("no-odata", JSON.stringify(req.odata));
 
-    };
+	};
 };

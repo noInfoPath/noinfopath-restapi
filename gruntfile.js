@@ -7,7 +7,7 @@ module.exports = function (grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		concat: {
 			readme: {
-				src: ['docs/index.md'],
+				src: ['docs/restapi.md'],
 				dest: 'readme.md'
 			}
 		},
