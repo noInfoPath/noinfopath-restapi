@@ -8,6 +8,7 @@ var config = require("./config"),
 	CRUD_OPERATIONS = {
 		"CREATE": "create",
 		"READ": "read",
+		"READMETA": "readmeta",
 		"UPDATE": "update",
 		"DELETE": "delete",
 		"COUNT": "count"
@@ -36,22 +37,48 @@ function _readDocument(payload, req, filter) {
 
 	return new Promise(function (resolve, reject) {
 		var bucket = gcs.bucket(schema.bucketName),
-			path = schema.folderName + filter.query[schema.primaryKey],
-			file = bucket.file(path);
-
-		// file.getMetadata().then(function (data) {
-		// 	var metadata = data[0];
-		// 	var apiResponse = data[1];
-		//
-		// 	console.log(data);
-		//
-		// });
-		resolve(file.createReadStream());
+			path = filter.query[schema.primaryKey],
+			file = bucket.file(schema.folderName + path);
 
 
+		file.getMetadata(function (err, data) {
+			if (err) {
+				resolve([]);
+			} else {
+				resolve({
+					stream: file.createReadStream(),
+					metadata: data
+				});
+			}
+
+		});
 	});
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
+
+function _readDocumentMeta(payload, data, filter, db) {
+	var schema = this;
+
+	return new Promise(function (resolve, reject) {
+		try {
+			var bucket = gcs.bucket(schema.bucketName),
+				path = schema.folderName + filter,
+				file = bucket.file(path);
+
+			file.getMetadata(function (err, metadata, apiResponse) {
+				if (err) {
+					reject(err);
+				} else {
+					resolve([metadata]);
+				}
+			});
+
+		} catch (err) {
+			reject(err);
+		}
+	});
+}
+CRUD[CRUD_OPERATIONS.READMETA] = _readDocumentMeta;
 
 function _insertDocument(payload, req, filter) {
 	var schema = this;
@@ -59,10 +86,12 @@ function _insertDocument(payload, req, filter) {
 	return new Promise(function (resolve, reject) {
 
 		var bucket = gcs.bucket(schema.bucketName),
-			path = schema.folderName + payload.metadata.metadata[schema.fileNameProperty],
+			path = schema.folderName + payload.metadata[schema.fileNameProperty],
 			file = bucket.file(path);
 		//d = JSON.stringify(data);
-		console.log(path);
+		//console.log(path);
+
+
 
 		objStreamer(req.body).pipe(file.createWriteStream())
 			.on('error', function (err) {
@@ -70,8 +99,16 @@ function _insertDocument(payload, req, filter) {
 				reject(err);
 			})
 			.on('finish', function () {
-				console.log("It worked!");
-				resolve();
+
+				file.setMetadata(payload, function(err, apiResponse) {
+					if(err) {
+						reject(err);
+					} else {
+						resolve();
+					}
+				});
+
+
 			});
 
 	});
@@ -108,7 +145,11 @@ function GCSConnection(schema, type, data, filter) {
 		//console.log(arguments);
 		console.log("executeTransaction on Grid Store", type);
 
-		return CRUD[type].call(this, payload, data, filter);
+		var p = CRUD[type].call(this, payload, data, filter);
+
+		console.log("Test");
+
+		return p;
 	}
 
 	function resolveMetadata(collectionName, schema, req) {
@@ -124,16 +165,18 @@ function GCSConnection(schema, type, data, filter) {
 
 				if (req) {
 					data = req.body;
-					payload.metadata.contentType = req.contentType();
+					payload.metadata["Content-Type"] = req.contentType();
 				}
 
 				if (data) {
 					for (var i = 0; i < schema.metadata.length; i++) {
 						var colName = schema.metadata[i],
 							datum = data[colName];
-						if (!!datum) payload.metadata.metadata[colName] = data[colName];
+						if (!!datum) payload.metadata[colName] = data[colName];
+						if(colName === "type") payload.metadata["Content-Type"] = datum;
 					}
 				}
+
 
 				resolve(payload);
 			} catch (err) {

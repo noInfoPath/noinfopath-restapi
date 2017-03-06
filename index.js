@@ -1,3 +1,23 @@
+/*
+ *	NoInfoPath REST API
+ *	===================
+ *	*@version 2.0.11*
+ *
+ *	Copyright (c) 2017 The NoInfoPath Group, LLC.
+ *
+ *	Licensed under the MIT License. (MIT)
+ *
+ *	___
+ *
+ *	Overview
+ *	--------
+ *	Exposes MongoDB, Google Cloud Storage, and AWS S3 via ODATA/CRUD HTTP
+ *	interface. Use JWT to secure communications.
+ *
+ *	Installation
+ *	------------
+ *	> npm install @noinfopath/noinfopath-restapi
+ */
 var noLibs = require('@noinfopath/noinfopath-node-libraries'),
     config = require("./config"),
     restify = require("restify"),
@@ -6,7 +26,7 @@ var noLibs = require('@noinfopath/noinfopath-node-libraries'),
     schemas = require("./no-schemas")(),
     noREST = require("./no-rest"),
     server = restify.createServer(),
-    base64url = require("base64url")
+    base64url = require("base64url");
 
 function corsHandler(req, res, next) {
 
@@ -28,8 +48,8 @@ function optionsRoute(req, res, next) {
 
 noLibs.logging(config);
 
-console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.4");
-console.log("Copyright (c) 2015 The NoInfoPath Group, LLC.");
+console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.11");
+console.log("Copyright (c) 2017 The NoInfoPath Group, LLC.");
 console.log("Licensed under the MIT License. (MIT)");
 console.log("");
 console.log("Configuration in progress...");
@@ -63,5 +83,5 @@ server.listen(config.server.port, config.server.address, function() {
 });
 
 server.on("after", function(request, response, route, error) {
-    console.log("End: ", route.spec.method, route.spec.path, error || "");
+    console.log("End: ", route.spec.method, request.url, error || "");
 });

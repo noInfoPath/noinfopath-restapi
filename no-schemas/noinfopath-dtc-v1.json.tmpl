@@ -4,10 +4,11 @@
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID",
-	"largeObjectHandler": {"fileName": "ChangeID"},
+	"fileNameProperty": "ChangeID",
 	"columns": ["ChangeID", "CreatedBy", "DateCreated", "ModifiedBy", "ModifiedDate", "namespace", "state", "timestamp", "transactionId", "userId"]
 },
 {
+	"storageType": "mongo",
 	"mongoDbUrl": "~NIP_MONGO_HOST~/efr2_dtc",
 	"uri": "dtc/changes-metadata",
 	"collectionName": "changes.files",

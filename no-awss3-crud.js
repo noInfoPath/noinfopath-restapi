@@ -1,3 +1,4 @@
+
 var config = require("./config"),
 	gcs = require('@google-cloud/storage')({
 		projectId: config.googleApis.gcs.projectId,
@@ -8,6 +9,7 @@ var config = require("./config"),
 	CRUD_OPERATIONS = {
 		"CREATE": "create",
 		"READ": "read",
+		"READMETA": "readmeta",
 		"UPDATE": "update",
 		"DELETE": "delete",
 		"COUNT": "count"
@@ -45,9 +47,16 @@ function _readDocument(payload, req, filter) {
 			params.Bucket = schema.bucketName;
 			params.Key = path;
 
-			file = s3.getObject(params);
 
-			resolve(file.createReadStream());
+
+			s3.headObject(params, function(err, data){
+				if(err) {
+					reject(err);
+				} else {
+					file = s3.getObject(params);
+					resolve({stream: file.createReadStream(), metadata: data});
+				}
+			});
 
 		} catch (err) {
 			reject(err);
@@ -55,6 +64,35 @@ function _readDocument(payload, req, filter) {
 	});
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
+
+function _readDocumentMeta(payload, data, filter, db) {
+	var schema = this;
+
+	return new Promise(function (resolve, reject) {
+		try {
+			var S3 = require('aws-sdk/clients/s3'),
+				config = require("./config"),
+				s3 = new S3(config.amazonApis.s3),
+				path = schema.folderName + filter.query[schema.primaryKey],
+				url, params = {};
+
+			params.Bucket = schema.bucketName;
+			params.Key = path;
+
+
+			s3.headObject(params, function(err, data){
+				if(err) {
+					reject(err);
+				} else {
+					resolve([data]);
+				}
+			});
+		} catch (err) {
+			reject(err);
+		}
+	});
+}
+CRUD[CRUD_OPERATIONS.READMETA] = _readDocumentMeta;
 
 function _insertDocument(payload, req, filter) {
 	var schema = this;

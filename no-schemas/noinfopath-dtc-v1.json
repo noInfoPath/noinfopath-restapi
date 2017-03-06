@@ -5,9 +5,7 @@
 		"uri": "dtc/changes",
 		"collectionName": "changes",
 		"primaryKey": "ChangeID",
-		"largeObjectHandler": {
-			"fileName": "ChangeID"
-		},
+		"fileNameProperty": "ChangeID",
 		"columns": [
             "ChangeID",
             "CreatedBy",
@@ -22,11 +20,24 @@
         ]
     },
 	{
-		"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
-		"uri": "dtc/changes-metadata",
-		"collectionName": "changes.files",
-		"primaryKey": "_id"
-    },
+		"storageType": "gcs",
+		"uri": "gcs/NoInfoPath_FileUploadCache",
+		"bucketName": "file_cache.noinfopath.net",
+		"folderName": "rm-efr2-test/",
+		"fileNameProperty": "name",
+		"primaryKey": "FileID",
+		"metadata": [
+			"CreatedBy",
+			"DateCreated",
+			"FileID",
+			"ModifiedBy",
+			"ModifiedDate",
+			"name",
+			"size",
+			"type"
+		],
+		"contentType": "application/json"
+	},
 	{
 		"storageType": "awss3",
 		"uri": "dtc/NoInfoPath_FileUploadCache",
@@ -47,6 +58,7 @@
 		"contentType": "application/json"
     },
 	{
+		"storageType": "mongo",
 		"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
 		"uri": "dtc/log",
 		"collectionName": "logs",
