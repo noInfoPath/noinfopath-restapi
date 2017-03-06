@@ -479,7 +479,7 @@ function _configRoute(server, crudProvider, schema) {
 
 	console.log("Configuring route ", schema.uri, "as Storage Type", storageType || "Mongo Collection");
 	if(storageType) {
-		//server.get(schema.uri + "-metadata", jwtCheck, _get.bind(null, crudProv, schema));
+		if(schema.odata) server.get(schema.uri + "-metadata", jwtCheck, _get.bind(null, crudProv, schema));
 		server.get(schema.uri + "-metadata/:id", jwtCheck, _getOneMeta.bind(null, crudProv, schema));
 	} else {
 		server.get(schema.uri, jwtCheck, _get.bind(null, crudProv, schema));
