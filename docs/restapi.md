@@ -22,7 +22,7 @@ Route Configuration
 
 > NOTE: NoInfoPath Configuration (@noinfopath/noinfopath-config) should be used in conjuction with the feature. The the noinfopath-config `readme.md` for more information.
 
-The NoInfoPath route configuration files make it simple to create new REST End-Points for you application. The files contain all of the information require to establish
+The NoInfoPath route configuration files make it simple to create new REST End-Points for your application. The files contain all of the information require to establish
 the end-points, define what type of backend storage system will be implmented by the end-points, along with any storage type specific configurations.
 
 Typically you create a configuration file for each namespace that needs be to expose as a REST interface. A `namespace` is a route's URI prefix. For example given a
@@ -117,7 +117,7 @@ how and when to use them.
 
 |Name|Description|
 |----|-----------|
-|storageType|Always `mongo`|
+|storageType|Always `mgfsb`|
 |mongoDbUrl|A url that points to the mongodb server, and the database to connect to.|
 |uri|The URI that use to configure the route for the end-point.|
 |collectionName|The name of the collection within the database specified by the `mongoDbUrl`|
@@ -147,6 +147,78 @@ how and when to use them.
 		"transactionId",
 		"userId"
 	]
+}
+```
+
+### Google Cloud Storage (GCS) Properties
+
+|Name|Description|
+|----|-----------|
+|storageType|Always `gcs`|
+|uri|The URI that use to configure the route for the end-point.|
+|bucketName|The name of the bucket  S3 to store objects.|
+|folderName|The name of the folder under the S3 Bucket to store objects. Must always end wth a forward slash (/). If the root is desired set it to and empty string. Nested folders are supported.|
+|primaryKey|The property (column) that defined the collections primary key.|
+|fileNameProperty|Defines which metadata property is used as the file name for saving objects to a bucket.|
+|metadata|An array of property names that are extracted from an incoming object, and stored as metadata association with a bucket object.|
+
+*Sample Configuration*
+
+```json
+{
+ 	"storageType": "gcs",
+ 	"uri": "gcs/NoInfoPath_FileUploadCache",
+ 	"bucketName": "file_cache.noinfopath.net",
+ 	"folderName": "rm-efr2-test/",
+ 	"fileNameProperty": "name",
+ 	"primaryKey": "FileID",
+ 	"metadata": [
+	 	"CreatedBy",
+	 	"DateCreated",
+	 	"FileID",
+	 	"ModifiedBy",
+	 	"ModifiedDate",
+		 "name",
+	 	"size",
+	 	"type"
+ 	],
+ 	"contentType": "application/json"
+}
+```
+
+### Amazon Web Services - Simple Storage Service (AWS S3) Properties
+
+|Name|Description|
+|----|-----------|
+|storageType|Always `awss3`|
+|uri|The URI that use to configure the route for the end-point.|
+|bucketName|The name of the bucket in S3 to store objects.|
+|folderName|The name of the folder under the GCS Bucket to store objects. Must always end wth a forward slash (/). If the root is desired set it to and empty string. Nested folders are supported.|
+|primaryKey|The property (column) that defined the collections primary key.|
+|fileNameProperty|Defines which metadata property is used as the file name for saving objects to a bucket.|
+|metadata|An array of property names that are extracted from an incoming object, and stored as metadata association with a bucket object.|
+
+*Sample Configuration*
+
+```json
+{
+ 	"storageType": "gcs",
+ 	"uri": "gcs/NoInfoPath_FileUploadCache",
+ 	"bucketName": "file_cache.noinfopath.net",
+ 	"folderName": "rm-efr2-test/",
+ 	"fileNameProperty": "name",
+ 	"primaryKey": "FileID",
+ 	"metadata": [
+	 	"CreatedBy",
+	 	"DateCreated",
+	 	"FileID",
+	 	"ModifiedBy",
+	 	"ModifiedDate",
+	 	"name",
+	 	"size",
+	 	"type"
+ 	],
+ 	"contentType": "application/json"
 }
 ```
 

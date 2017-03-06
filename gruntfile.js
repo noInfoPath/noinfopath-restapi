@@ -25,7 +25,7 @@ module.exports = function (grunt) {
 		nodocs: {
 			"internal": {
 				options: {
-					src: ['index.js','no-rest.js','no-mongo-crud.js','no-mongo-crud-lo.js'],
+					src: ['index.js','no-rest.js','no-mongo-crud.js','no-mongo-crud-lo.js', 'no-gcs-crud.js', 'no-awss3-crud.js'],
 					dest: 'docs/restapi.md',
 					start: ['/*'],
 					multiDocs: {

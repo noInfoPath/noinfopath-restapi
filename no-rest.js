@@ -4,7 +4,7 @@
 *
 *	> NOTE: NoInfoPath Configuration (@noinfopath/noinfopath-config) should be used in conjuction with the feature. The the noinfopath-config `readme.md` for more information.
 *
-*	The NoInfoPath route configuration files make it simple to create new REST End-Points for you application. The files contain all of the information require to establish
+*	The NoInfoPath route configuration files make it simple to create new REST End-Points for your application. The files contain all of the information require to establish
 *	the end-points, define what type of backend storage system will be implmented by the end-points, along with any storage type specific configurations.
 *
 *	Typically you create a configuration file for each namespace that needs be to expose as a REST interface. A `namespace` is a route's URI prefix. For example given a
@@ -131,7 +131,7 @@ function _get(crud, schema, req, res, next) {
 }
 
 function _getOne(crud, schema, req, res, next) {
-	
+
 	crud.execute(schema, crud.operations.READ, null, req.params.id)
 		.then(function (results) {
 

@@ -3,7 +3,7 @@
  *
  *	|Name|Description|
  *	|----|-----------|
- *	|storageType|Always `mongo`|
+ *	|storageType|Always `mgfsb`|
  *	|mongoDbUrl|A url that points to the mongodb server, and the database to connect to.|
  *	|uri|The URI that use to configure the route for the end-point.|
  *	|collectionName|The name of the collection within the database specified by the `mongoDbUrl`|
