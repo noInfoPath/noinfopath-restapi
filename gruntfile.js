@@ -9,7 +9,12 @@ module.exports = function (grunt) {
 			readme: {
 				src: ['docs/restapi.md'],
 				dest: 'readme.md'
+			},
+			wiki: {
+				src: ['docs/restapi.md'],
+				dest: '../wikis/noinfopath-restapi.wiki/home.md'
 			}
+
 		},
 		bumpup: {
 			file: 'package.json'
@@ -56,6 +61,6 @@ module.exports = function (grunt) {
 
 	//Only globals.js in readme.md
 	grunt.registerTask('release', ['bumpup', 'version', 'nodocs:internal', 'concat:readme']);
-	grunt.registerTask('document', ['nodocs:internal']);
+	grunt.registerTask('document', ['nodocs:internal', 'concat']);
 
 };
