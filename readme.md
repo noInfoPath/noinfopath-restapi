@@ -17,6 +17,8 @@ Installation
 ------------
 > npm install @noinfopath/noinfopath-restapi
 
+Test
+
 Route Configuration
 -------------------
 

@@ -17,6 +17,7 @@
  *	Installation
  *	------------
  *	> npm install @noinfopath/noinfopath-restapi
+ *
  */
 var noLibs = require('@noinfopath/noinfopath-node-libraries'),
     config = require("./config"),

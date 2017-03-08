@@ -53,7 +53,7 @@ module.exports = function (grunt) {
 		shell: {
 	        wiki1: {
 	            command: [
-	                'cd ../wikis/noinfopath-restapi.wiki',
+	                'cd ../wikis/<%= pkg.shortName %>.wiki',
 					'pwd',
 	                'git stash',
 	                'git pull'
