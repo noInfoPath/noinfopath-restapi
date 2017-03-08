@@ -78,7 +78,7 @@ function _readDocument(payload, req, filter) {
 			var S3 = require('aws-sdk/clients/s3'),
 				config = require("./config"),
 				s3 = new S3(config.amazonApis.s3),
-				path = schema.folderName + filter.query[schema.primaryKey],
+				path = schema.folderName + filter,
 				file, url, params = {};
 
 			params.Bucket = schema.bucketName;
@@ -110,7 +110,7 @@ function _readDocumentMeta(payload, data, filter, db) {
 			var S3 = require('aws-sdk/clients/s3'),
 				config = require("./config"),
 				s3 = new S3(config.amazonApis.s3),
-				path = schema.folderName + filter.query[schema.primaryKey],
+				path = schema.folderName + filter,
 				url, params = {};
 
 			params.Bucket = schema.bucketName;

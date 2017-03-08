@@ -58,11 +58,16 @@ function _isBucketStorage(storageType) {
 	return !!storageTypes[storageType];
 }
 
-function _error(op, res, err) {
-	//console.error(err.message.code);
-	res.statusMessage = err.message.message;
-	res.statusCode = err.message.code;
+function _error(op, res, next, err) {
+	//console.error(err.message);
+	var m = err.message || err;
+
+	console.log(m.code);
+
+	res.statusMessage = m.code || m.code === 404 ? m.message : m;
+	res.statusCode =  m.statusCode || m.code || 500;
 	res.end();
+	if(next) next();
 }
 
 function _get(crud, schema, req, res, next) {
@@ -80,19 +85,20 @@ function _get(crud, schema, req, res, next) {
 					res.status = 200;
 					res.end();
 					results.db.close();
+					next();
 				});
 			} else {
 				res.send(404);
+				next();
 			}
 		})
-		.catch(_error.bind(null, "GET", res))
+		.catch(_error.bind(null, "GET", res, next))
 		.then(function () {
-			next();
+
 		});
 }
 
 function _getOne(crud, schema, req, res, next) {
-
 	crud.execute(schema, crud.operations.READ, null, req.params.id)
 		.then(function (results) {
 
@@ -116,26 +122,33 @@ function _getOne(crud, schema, req, res, next) {
 						res.status = 200;
 						res.end();
 						if (!!results.db) results.db.close();
+						next();
 
 					}).on("error", function (err) {
 						res.send(500, err);
+						next();
 
 					});
 				} else if (results.length) {
 					res.setHeader('content-type', contentType);
 					res.send(200, results[0]);
+					next();
 				} else {
 					res.send(404);
+					next();
 				}
 
 			} catch(err) {
+
+
+				console.error(err);
 				res.statusMessage = err;
 				res.status = 500;
 				res.end();
-				console.error(err);
+				next();
 			}
 		})
-		.catch(_error.bind(null, "GET", res))
+		.catch(_error.bind(null, "GET", res, next))
 		.then(function () {
 			next();
 
@@ -144,6 +157,7 @@ function _getOne(crud, schema, req, res, next) {
 }
 
 function _getOneMeta(crud, schema, req, res, next) {
+
 	crud.execute(schema, crud.operations.READMETA, null, req.params.id)
 		.then(function (results) {
 			if (!!results.pipe) { //checks if results is a stream
@@ -154,19 +168,19 @@ function _getOneMeta(crud, schema, req, res, next) {
 					res.status = 200;
 					res.end();
 					if (!!results.db) results.db.close();
+					next();
 				}).on("error", function (err) {
-					_error("GET", res, err);
+					_error("GET", res, err, next);
 				});
 			} else if (results.length) {
 				res.send(200, results[0]);
+				next();
 			} else {
 				res.send(404);
+				next();
 			}
 		})
-		.catch(_error.bind(null, "GET", res))
-		.then(function () {
-			next();
-		});
+		.catch(_error.bind(null, "GET", res, next));
 
 }
 
@@ -187,11 +201,10 @@ function _putByPrimaryKey(crud, schema, req, res, next) {
 	crud.execute(schema, crud.operations.UPDATE, req.body, filter)
 		.then(function (results) {
 			res.send(200, results);
-		})
-		.catch(_error.bind(null, "PUT", res))
-		.then(function () {
 			next();
-		});
+		})
+		.catch(_error.bind(null, "PUT", res, next));
+
 
 }
 

@@ -72,24 +72,28 @@ CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 
 function _readDocument(payload, req, filter) {
 	var schema = this;
-
 	return new Promise(function (resolve, reject) {
 		var bucket = gcs.bucket(schema.bucketName),
-			path = filter.query[schema.primaryKey],
+			path = filter,
 			file = bucket.file(schema.folderName + path);
 
+		try {
 
-		file.getMetadata(function (err, data) {
-			if (err) {
-				resolve([]);
-			} else {
-				resolve({
-					stream: file.createReadStream(),
-					metadata: data
-				});
-			}
+			file.getMetadata(function (err, data) {
 
-		});
+
+				if (err) {
+					reject(err);
+				} else {
+					resolve({stream: file.createReadStream(), metadata: data});
+				}
+
+			});
+		} catch(err) {
+			reject(err);
+		}
+
+
 	});
 }
 CRUD[CRUD_OPERATIONS.READ] = _readDocument;
@@ -181,13 +185,8 @@ function GCSConnection(schema, type, data, filter) {
 
 	function executeTransaction(type, data, filter, payload) {
 		//console.log(arguments);
-		console.log("executeTransaction on Grid Store", type);
 
-		var p = CRUD[type].call(this, payload, data, filter);
-
-		console.log("Test");
-
-		return p;
+		return CRUD[type].call(this, payload, data, filter);
 	}
 
 	function resolveMetadata(collectionName, schema, req) {
