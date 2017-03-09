@@ -95,4 +95,5 @@ module.exports = function (grunt) {
 	grunt.registerTask('wikiWack', ['shell:wiki1','concat:wiki', 'copy:wiki', 'shell:wiki2']);
 	grunt.registerTask('release', ['bumpup', 'version', 'nodocs:internal', 'concat:readme', 'wikiWack']);
 	grunt.registerTask('document', ['nodocs:internal', 'concat:readme']);
+	grunt.registerTask('updateWiki', ['document', 'wikiWack']);
 };
