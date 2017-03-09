@@ -1,6 +1,6 @@
 NoInfoPath REST API
 ===================
-*@version 2.0.13*
+*@version 2.0.14*
 
 Copyright (c) 2017 The NoInfoPath Group, LLC.
 
@@ -32,8 +32,8 @@ Bucket type stores add two `-metadata` `GET` end-points. (e.g. `/foo/bar-metadat
 #### Route configuration Files
 
 Route configuration file can be found in the `no-schema` folder located on the root of the `noinfopath-restapi` project.
-There are two file type; the `*.json` files, and the `*.json.tmpl` file. The RESTAPI, upon startup looks for the `*.json`
-and loads them into memory. They are then used to configure the routes automatially.
+There are two file types; the `*.json` files, and the `*.json.tmpl` file. The RESTAPI, upon startup looks for the `*.json`
+and loads them into memory. They are then used to configure the routes aautomatically.
 
 > NOTE: The `*.json.tmpl` files are used by NoInfoPath Configuration (@noinfopath/noinfopath-config) to automate deployment to different deployment locations.
 > noinfopath-config will generate the `*.json` files from the `*.json.tmpl` files. See the noinfopath-config `readme.md` for more information.

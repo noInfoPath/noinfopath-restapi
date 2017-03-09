@@ -11,7 +11,7 @@ ___
 
 ODATA Usage
 -----------
-The NoInfoPath RESTAPI implements a ODATA query interface.  It is based on the ODATA V4 specification.
+The NoInfoPath RESTAPI implements an ODATA query interface.  It is based on the ODATA V4 specification.
 
 > This was implemented using an NPM library called `odata-v4-mongodb`. The implentation is flaw, and
 > incomplete when have made some monkey patches to mitigate these shortcomings.

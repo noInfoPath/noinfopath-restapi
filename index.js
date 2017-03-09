@@ -1,7 +1,7 @@
 /*
  *	NoInfoPath REST API
  *	===================
- *	*@version 2.0.13*
+ *	*@version 2.0.14*
  *
  *	Copyright (c) 2017 The NoInfoPath Group, LLC.
  *
@@ -91,7 +91,7 @@ function optionsRoute(req, res, next) {
 
 noLibs.logging(config);
 
-console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.13");
+console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.14");
 console.log("Copyright (c) 2017 The NoInfoPath Group, LLC.");
 console.log("Licensed under the MIT License. (MIT)");
 console.log("");
