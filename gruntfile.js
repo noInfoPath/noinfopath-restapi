@@ -5,16 +5,27 @@ module.exports = function (grunt) {
 	// Project configuration.
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
+		copy: {
+	        wiki: {
+	            files: [
+	                {
+	                    expand: true,
+	                    flatten: true,
+	                    src: ['docs/*.md', '!docs/global.md'],
+	                    dest: '../wikis/<%= pkg.shortName %>.wiki/'
+	                }
+	            ]
+	        }
+	    },
 		concat: {
 			readme: {
 				src: ['docs/restapi.md'],
 				dest: 'readme.md'
 			},
 			wiki: {
-				src: ['docs/restapi.md'],
-				dest: '../wikis/noinfopath-restapi.wiki/home.md'
+				src: ['docs/index.md'],
+				dest: '../wikis/<%= pkg.shortName %>.wiki/home.md'
 			}
-
 		},
 		bumpup: {
 			file: 'package.json'
@@ -30,11 +41,11 @@ module.exports = function (grunt) {
 		nodocs: {
 			"internal": {
 				options: {
-					src: ['index.js', 'no-rest.js', 'no-mongo-crud.js', 'no-mongo-crud-lo.js', 'no-gcs-crud.js', 'no-awss3-crud.js'],
+					src: ['index.js', 'no-mongo-crud.js', 'no-mongo-crud-lo.js', 'no-gcs-crud.js', 'no-awss3-crud.js', 'no-odata.js'],
 					dest: 'docs/restapi.md',
-					start: ['/*'],
+					start: ['/*', '/**'],
 					multiDocs: {
-						multiFiles: false,
+						multiFiles: true,
 						dest: "docs/"
 					}
 				}
@@ -61,7 +72,7 @@ module.exports = function (grunt) {
 	        },
 			wiki2: {
 	            command: [
-	                'cd ../wikis/noinfopath-restapi.wiki',
+	                'cd ../wikis/<%= pkg.shortName %>.wiki',
 					'pwd',
 	                'git add .',
 	                'git commit -m"Wiki Updated"',
@@ -77,11 +88,11 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-nodocs');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-shell');
+	grunt.loadNpmTasks('grunt-contrib-copy');
 	//Default task(s).
 
 	//Only globals.js in readme.md
-	grunt.registerTask('wikiWack', ['shell:wiki1', 'concat:wiki', 'shell:wiki2']);
+	grunt.registerTask('wikiWack', ['shell:wiki1','concat:wiki', 'copy:wiki', 'shell:wiki2']);
 	grunt.registerTask('release', ['bumpup', 'version', 'nodocs:internal', 'concat:readme', 'wikiWack']);
-	grunt.registerTask('document', ['nodocs:internal', 'concat:readme', 'wikiWack']);
-
+	grunt.registerTask('document', ['nodocs:internal', 'concat:readme']);
 };

@@ -1,5 +1,16 @@
 /*
- *	### Amazon Web Services - Simple Storage Service (AWS S3) Properties
+ *	[NoInfoPath Home](http://gitlab.imginconline.com/noinfopath/noinfopath/wikis/home)
+ *
+ *	Copyright (c) 2017 The NoInfoPath Group, LLC.
+ *
+ *	Licensed under the MIT License. (MIT)
+ *
+ *	___
+ *
+ *	[NoInfoPath REST API *@version 2.0.13*](home)
+ *	=============================================
+ *
+ *	## Amazon Web Services - Simple Storage Service (AWS S3) Properties
  *
  *	|Name|Description|
  *	|----|-----------|
@@ -15,7 +26,7 @@
  *
  *	```json
  * {
- *	 	"storageType": "gcs",
+ *	 	"storageType": "awss3",
  *	 	"uri": "gcs/NoInfoPath_FileUploadCache",
  *	 	"bucketName": "file_cache.noinfopath.net",
  *	 	"folderName": "rm-efr2-test/",

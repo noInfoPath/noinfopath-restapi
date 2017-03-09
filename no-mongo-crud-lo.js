@@ -1,4 +1,15 @@
 /*
+ *	[NoInfoPath Home](http://gitlab.imginconline.com/noinfopath/noinfopath/wikis/home)
+ *
+ *	Copyright (c) 2017 The NoInfoPath Group, LLC.
+ *
+ *	Licensed under the MIT License. (MIT)
+ *
+ *	___
+ *
+ *	[NoInfoPath REST API *@version 2.0.13*](home)
+ *	=============================================
+ *
  *	### MongoDB Bucket Storage (GridFSBucket) Properties
  *
  *	|Name|Description|
