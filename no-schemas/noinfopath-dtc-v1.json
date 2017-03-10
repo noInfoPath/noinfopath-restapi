@@ -6,7 +6,7 @@
 		"collectionName": "changes",
 		"primaryKey": "ChangeID",
 		"fileNameProperty": "ChangeID",
-		"columns": [
+		"metadata": [
             "ChangeID",
             "CreatedBy",
             "DateCreated",
@@ -41,7 +41,7 @@
 	},
 	{
 		"storageType": "awss3",
-		"uri": "dtc/NoInfoPath_FileUploadCache",
+		"uri": "aws/NoInfoPath_FileUploadCache",
 		"bucketName": "file-cache.noinfopath.net",
 		"folderName": "rm-efr2-test/",
 		"fileNameProperty": "name",

@@ -30,10 +30,10 @@ function _isBucketStorage(storageType) {
 }
 
 function _error(op, res, next, err) {
-	//console.error(err.message);
-	var m = err.message || err;
 
-	console.log(m.code);
+	var m = err ?  err.message || err : {statusCode: 500, code: "Unknown error occured"};
+
+	//console.log(m.code);
 
 	res.statusMessage = m.code || m.code === 404 ? m.message : m;
 	res.statusCode =  m.statusCode || m.code || 500;
@@ -41,12 +41,28 @@ function _error(op, res, next, err) {
 	if(next) next();
 }
 
-function _get(crud, schema, req, res, next) {
-	// console.log("odata", req);
+function _resolveBodyData(req) {
+	try{
+		var b = typeof (req.body) === "string" ? JSON.parse(req.body) : req.body;
 
+		if (b._id) {
+			//console.log("HERE");
+			delete b._id;
+			//console.log("b", b);
+			req.body = b;
+			return req;
+		}
+	} catch(err) {
+		console.error(err);
+		return req;
+	}
+
+}
+function _get(crud, schema, req, res, next) {
 
 	crud.execute(schema, crud.operations.READ, null, req.odata)
 		.then(function (results) {
+
 			if (results.length || results["odata.metadata"]) {
 				res.send(200, results);
 			} else if (results.pipe) {
@@ -63,10 +79,34 @@ function _get(crud, schema, req, res, next) {
 				next();
 			}
 		})
-		.catch(_error.bind(null, "GET", res, next))
-		.then(function () {
+		.catch(_error.bind(null, "GET", res, next));
+}
 
-		});
+function _getMeta(crud, schema, req, res, next) {
+
+
+
+	crud.execute(schema, crud.operations.READMETA, null, req.odata)
+		.then(function (results) {
+
+			if (results.length || results["odata.metadata"]) {
+				res.send(200, results);
+			} else if (results.pipe) {
+				res.setHeader('content-type', 'application/json');
+
+				results.pipe(res).on('finish', function () {
+					res.statusMessage = "OK";
+					res.status = 200;
+					res.end();
+					results.db.close();
+					next();
+				});
+			} else {
+				res.send(404);
+				next();
+			}
+		})
+		.catch(_error.bind(null, "GET", res, next));
 }
 
 function _getOne(crud, schema, req, res, next) {
@@ -119,16 +159,13 @@ function _getOne(crud, schema, req, res, next) {
 				next();
 			}
 		})
-		.catch(_error.bind(null, "GET", res, next))
-		.then(function () {
-			next();
+		.catch(_error.bind(null, "GET", res, next));
 
-		});
 
 }
 
 function _getOneMeta(crud, schema, req, res, next) {
-
+	console.log("_getOneMeta");
 	crud.execute(schema, crud.operations.READMETA, null, req.params.id)
 		.then(function (results) {
 			if (!!results.pipe) { //checks if results is a stream
@@ -156,20 +193,16 @@ function _getOneMeta(crud, schema, req, res, next) {
 }
 
 function _putByPrimaryKey(crud, schema, req, res, next) {
-	console.log("_putByPrimaryKey", crud.type);
+	console.log("_putByPrimaryKey", crud.type, "isBucketStorage", _isBucketStorage(schema.storageType));
 	var routeID = req.params.id,
 		filter = {},
-		b = typeof (req.body) === "string" ? JSON.parse(req.body) : req.body;
+		data = _resolveBodyData(req);
 
-	if (b._id) {
-		delete b._id;
-		req.body = JSON.stringify(b);
-		//console.log("b", b);
-	}
 
-	filter[schema.primaryKey] = routeID;
+	filter._id = routeID;
 
-	crud.execute(schema, crud.operations.UPDATE, req.body, filter)
+
+	crud.execute(schema, crud.operations.UPDATE, data, filter)
 		.then(function (results) {
 			res.send(200, results);
 			next();
@@ -196,10 +229,8 @@ function _post(crud, schema, req, res, next) {
 			//			res.send(200, results);
 			console.log("post was successful");
 		})
-		.catch(_error.bind(null, "POST", res))
-		.then(function () {
-			next();
-		});
+		.catch(_error.bind(null, "POST", res, next));
+
 
 }
 
@@ -463,14 +494,21 @@ function _configRoute(server, crudProvider, schema) {
 
 	console.log("Configuring route ", schema.uri, "as Storage Type", storageType || "Mongo Collection");
 	if(storageType) {
-		if(schema.odata) server.get(schema.uri + "-metadata", jwtCheck, _get.bind(null, crudProv, schema));
-		server.get(schema.uri + "-metadata/:id", jwtCheck, _getOneMeta.bind(null, crudProv, schema));
+		if(schema.odata) {
+			server.get(schema.uri + "-metadata", jwtCheck, _getMeta.bind(null, crudProv, schema));
+		} else {
+			server.get(schema.uri + "-metadata/:id", jwtCheck, _getOneMeta.bind(null, crudProv, schema));
+		}
+
+		if(schema.storageType === "mgfsb") {
+			server.put(schema.uri + "-metadata/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
+			server.patch(schema.uri + "-metadata/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
+		}
+
 	} else {
 		server.get(schema.uri, jwtCheck, _get.bind(null, crudProv, schema));
 	}
 	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProv, schema));
-	server.put(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
-	server.patch(schema.uri + "/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
 	server.del(schema.uri + "/:id", jwtCheck, _delete.bind(null, crudProv, schema));
 	server.post(schema.uri, jwtCheck, _post.bind(null, crudProv, schema));
 

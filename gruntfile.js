@@ -76,6 +76,7 @@ module.exports = function (grunt) {
 					'pwd',
 	                'git add .',
 	                'git commit -m"Wiki Updated"',
+
 					'git push'
 	            ].join(' && ')
 	        }

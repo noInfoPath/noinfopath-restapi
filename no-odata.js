@@ -15,7 +15,7 @@
 *	The NoInfoPath RESTAPI implements an ODATA query interface.  It is based on the ODATA V4 specification.
 *
 *	> This was implemented using an NPM library called `odata-v4-mongodb`. The implentation is flaw, and
-*	> incomplete when have made some monkey patches to mitigate these shortcomings. 
+*	> incomplete when have made some monkey patches to mitigate these shortcomings.
 *
 *	- [ODATA V4 Specification](http://www.odata.org/documentation/)
 */
@@ -77,7 +77,7 @@ module.exports = function () {
 		}
 
 
-		console.log("no-odata", JSON.stringify(req.odata));
+		//console.log("no-odata", JSON.stringify(req.odata));
 
 	};
 };

@@ -26,7 +26,7 @@ ___
 ```json
 {
  	"storageType": "awss3",
- 	"uri": "gcs/NoInfoPath_FileUploadCache",
+ 	"uri": "aws/NoInfoPath_FileUploadCache",
  	"bucketName": "file_cache.noinfopath.net",
  	"folderName": "rm-efr2-test/",
  	"fileNameProperty": "name",
