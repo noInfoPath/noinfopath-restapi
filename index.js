@@ -1,7 +1,7 @@
 /*
  *	NoInfoPath REST API
  *	===================
- *	*@version 2.0.17*
+ *	*@version 2.0.18*
  *
  *	Copyright (c) 2017 The NoInfoPath Group, LLC.
  *
@@ -135,7 +135,7 @@ function startHTTPS() {
 }
 
 
-console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.17");
+console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.18");
 console.log("Copyright (c) 2017 The NoInfoPath Group, LLC.");
 console.log("Licensed under the MIT License. (MIT)");
 console.log("");

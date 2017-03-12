@@ -10,5 +10,5 @@ CMD ["grunt", "noinfopath_config:dev"]
 
 COPY . /usr/src/noinfopath/noinfopath-restapi
 
-EXPOSE 4000
+EXPOSE 443
 CMD ["npm", "start"]

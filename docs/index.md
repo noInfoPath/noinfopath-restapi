@@ -1,6 +1,6 @@
 NoInfoPath REST API
 ===================
-*@version 2.0.17*
+*@version 2.0.18*
 
 Copyright (c) 2017 The NoInfoPath Group, LLC.
 
