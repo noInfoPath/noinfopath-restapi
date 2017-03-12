@@ -1,7 +1,7 @@
 {
 	"server": {
 		"address": "0.0.0.0",
-		"port": 4000,
+		"port": 443,
 		"version": "*",
 		"agent": false
 	},
