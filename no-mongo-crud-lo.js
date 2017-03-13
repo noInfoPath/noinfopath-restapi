@@ -65,7 +65,7 @@ function _resolveData(indata) {
 	var b;
 
 
-	if(indata.body) {
+	if(indata && indata.body) {
 		b = indata.body;
 	} else {
 		b = indata;
@@ -90,7 +90,7 @@ CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 function _readDocument(payload, data, filter, db) {
 	var schema = this;
 
-	//console.log("XXXXX", filter);
+	console.log("XXXXX", filter);
 	return new Promise(function (resolve, reject) {
 		var pkid = filter,
 			bucket = new GridFSBucket(db, {
@@ -108,7 +108,7 @@ CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
 function _readDocumentMeta(payload, data, filter, db) {
 	try {
-		//("_readDocumentMeta", payload, filter);
+		console.log("_readDocumentMeta",  payload, typeof(data), filter, typeof(db));
 
 		var schema = this,
 			colName = schema.collectionName + ".files",
@@ -156,7 +156,7 @@ function _insertDocument(payload, req, filter, db) {
 					bucketName: schema.collectionName
 				}); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
 
-			console.log("XXXXXXX", data[schema.primaryKey]);
+			//console.log("XXXXXXX", data[schema.primaryKey], payload);
 
 			var uploadStream = bucket.openUploadStreamWithId(data[schema.primaryKey], data[schema.fileNameProperty] + ".json", payload);
 
@@ -255,13 +255,14 @@ function MongoConnection(schema, type, data, filter) {
 			var payload = {
 				"contentType": "application/json",
 				"metadata": {}
-			};
+			},
+			tmpdata = _resolveData(data);
 
-			if (data && schema.metadata) {
+			if (tmpdata && schema.metadata) {
 				//console.info("Resolving GridStore", collectionName);
 				for (var i = 0; i < schema.metadata.length; i++) {
 					var colName = schema.metadata[i],
-						datum = data[colName];
+						datum = tmpdata[colName];
 
 					if (datum) payload.metadata[colName] = datum;
 				}

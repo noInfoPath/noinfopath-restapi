@@ -5,14 +5,8 @@
 	"collectionName": "changes",
 	"primaryKey": "ChangeID",
 	"fileNameProperty": "ChangeID",
-	"metadata": ["ChangeID", "CreatedBy", "DateCreated", "ModifiedBy", "ModifiedDate", "namespace", "state", "timestamp", "transactionId", "userId"]
-},
-{
-	"storageType": "mongo",
-	"mongoDbUrl": "mongodb://img-sqlserv2.img.local:27017/efr2_dtc",
-	"uri": "dtc/changes-metadata",
-	"collectionName": "changes.files",
-	"primaryKey": "_id"
+	"metadata": ["ChangeID", "CreatedBy", "DateCreated", "ModifiedBy", "ModifiedDate", "namespace", "state", "timestamp", "transactionId", "userId"],
+	"odata": true
 },
 {
 	"storageType": "awss3",

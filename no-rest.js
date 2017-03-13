@@ -83,9 +83,7 @@ function _get(crud, schema, req, res, next) {
 }
 
 function _getMeta(crud, schema, req, res, next) {
-
-
-
+	
 	crud.execute(schema, crud.operations.READMETA, null, req.odata)
 		.then(function (results) {
 
@@ -498,6 +496,7 @@ function _configRoute(server, crudProvider, schema) {
 	if(storageType) {
 		if(schema.odata) {
 			server.get(schema.uri + "-metadata", jwtCheck, _getMeta.bind(null, crudProv, schema));
+//			server.get(schema.uri + "-metadata/:id", jwtCheck, _getMeta.bind(null, crudProv, schema));
 		} else {
 			server.get(schema.uri + "-metadata/:id", jwtCheck, _getOneMeta.bind(null, crudProv, schema));
 		}
