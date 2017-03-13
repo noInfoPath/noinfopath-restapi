@@ -143,40 +143,50 @@ function _readDocumentMeta(payload, data, filter, db) {
 CRUD[CRUD_OPERATIONS.READMETA] = _readDocumentMeta;
 
 
-function _insertDocument(payload, data, filter, db) {
+function _insertDocument(payload, req, filter, db) {
 	var schema = this;
+
 	//console.log("Test", data);
 	//console.log("_insertDocument", schema.primaryKey, data[schema.primaryKey], schema.fileNameProperty, data[schema.fileNameProperty]);
 	return new Promise(function (resolve, reject) {
-		var d = JSON.stringify(data),
-			bucket = new GridFSBucket(db, {
-				bucketName: schema.collectionName
-			}); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
+		try{
+			var data = _resolveData(req),
+				d = JSON.stringify(data),
+				bucket = new GridFSBucket(db, {
+					bucketName: schema.collectionName
+				}); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
 
-			console.log(data[schema.primaryKey]);
-		var uploadStream = bucket.openUploadStreamWithId(data[schema.primaryKey], data[schema.fileNameProperty] + ".json", payload);
+			console.log("XXXXXXX", data[schema.primaryKey]);
 
-		uploadStream.once("finish", function (err) {
-			db.close();
-			resolve();
-		});
+			var uploadStream = bucket.openUploadStreamWithId(data[schema.primaryKey], data[schema.fileNameProperty] + ".json", payload);
+
+			uploadStream.once("finish", function (err) {
+				db.close();
+				resolve();
+			});
 
 
-		uploadStream.once("error", function (err) {
-			db.close();
+			uploadStream.once("error", function (err) {
+				db.close();
+				console.error(err);
+				reject(err);
+			});
+
+			uploadStream.write(d, function (err) {
+				if (err) {
+					console.error(err);
+				} else {
+					console.log("working in write");
+				}
+			});
+
+			uploadStream.end();
+		} catch(err) {
 			console.error(err);
 			reject(err);
-		});
+		}
 
-		uploadStream.write(d, function (err) {
-			if (err) {
-				console.error(err);
-			} else {
-				console.log("working in write");
-			}
-		});
 
-		uploadStream.end();
 
 	});
 

@@ -213,12 +213,14 @@ function _putByPrimaryKey(crud, schema, req, res, next) {
 }
 
 function _post(crud, schema, req, res, next) {
-	var data = _isBucketStorage(schema.storageType) ? req : req.body;
 
+	var data = _isBucketStorage(schema.storageType) ? req : req.body;
 	//console.log(req.body);
 	console.log("POST", req.url, "crud.type", crud.type);
 	//console.log("POST", req.headers);
 	if (!!req.body[schema.primaryKey]) req.body._id = req.body[schema.primaryKey];
+
+	
 
 	crud.execute(schema, crud.operations.CREATE, data)
 		.then(function (results) {

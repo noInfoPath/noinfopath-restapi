@@ -1,6 +1,6 @@
 [{
 	"storageType": "mgfsb",
-	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://img-sqlserv2.img.local:27017/efr2_dtc",
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID",
@@ -9,7 +9,7 @@
 },
 {
 	"storageType": "mongo",
-	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://img-sqlserv2.img.local:27017/efr2_dtc",
 	"uri": "dtc/changes-metadata",
 	"collectionName": "changes.files",
 	"primaryKey": "_id"
@@ -34,7 +34,7 @@
 	"contentType": "application/json"
 },
 {
-	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://img-sqlserv2.img.local:27017/efr2_dtc",
 	"uri": "dtc/log",
 	"collectionName": "logs",
 	"primaryKey": "_id"
