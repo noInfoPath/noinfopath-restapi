@@ -7,9 +7,9 @@ COPY package.json /usr/src/noinfopath/noinfopath-restapi
 RUN npm install
 RUN npm install grunt -g
 
-RUN grunt noinfopath_config:prod
-
 COPY . /usr/src/noinfopath/noinfopath-restapi
+
+RUN grunt noinfopath_config:prod
 
 EXPOSE 443
 CMD ["npm", "start"]

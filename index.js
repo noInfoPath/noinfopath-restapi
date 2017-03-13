@@ -1,7 +1,7 @@
 /*
  *	NoInfoPath REST API
  *	===================
- *	*@version 2.0.18*
+ *	*@version 2.0.19*
  *
  *	Copyright (c) 2017 The NoInfoPath Group, LLC.
  *
@@ -90,6 +90,11 @@ function optionsRoute(req, res, next) {
 
 
 function startHTTPS() {
+	if(config.server.port !== 443) {
+		startHTTP();
+		return;
+	}
+
 	var sslOptions = {
 			certificate: fs.readFileSync('ssl/certificate.crt'),
 			key: fs.readFileSync('ssl/private.key'),
@@ -122,11 +127,11 @@ function startHTTPS() {
 	server.opts('/\.*/', corsHandler, optionsRoute);
 
 	server.listen(config.server.port, config.server.address, function () {
-		console.log('%s listening at %s', server.name, server.url);
+		console.log('%s listening at %s using SSL', server.name, server.url);
 	});
 
 	server.on("error", function (request, response, route, error) {
-		console.error(arguments);
+		startHTTP();
 	});
 
 	server.on("after", function (request, response, route, error) {
@@ -135,12 +140,55 @@ function startHTTPS() {
 }
 
 
-console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.18");
+function startHTTP() {
+	var server = restify.createServer();
+
+	server.pre(function (request, response, next) {
+		console.info("Start: ", request.method, request.url); // (1)
+		return next();
+	});
+	//console.log(config.cors);
+	server.use(restify.CORS({
+		origins: config.cors.whitelist, // defaults to ['*']
+		credentials: true, // defaults to false
+		// sets expose-headers
+		methods: ['GET', 'PUT', 'DELETE', 'POST', 'OPTIONS']
+	}));
+
+	server.use(restify.fullResponse());
+
+	server.use(restify.queryParser());
+
+	server.use(restify.bodyParser());
+
+	server.use(odataParser());
+
+	noREST(server, crud, schemas);
+
+	server.opts('/\.*/', corsHandler, optionsRoute);
+
+	console.log(config.server);
+	server.listen(config.server.port, config.server.address, function () {
+		console.log('%s listening at %s', server.name, server.url);
+	});
+
+	server.on("error", function (error) {
+		console.log(error);
+	});
+
+	server.on("after", function (request, response, route, error) {
+		console.log("End: ", route.spec.method, request.url, error || "");
+	});
+}
+
+
+console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.19");
 console.log("Copyright (c) 2017 The NoInfoPath Group, LLC.");
 console.log("Licensed under the MIT License. (MIT)");
 console.log("");
 console.log("Configuration in progress...");
 
 noLibs.logging(config);
+
 
 startHTTPS();
