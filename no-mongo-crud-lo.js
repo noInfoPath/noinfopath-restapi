@@ -90,7 +90,7 @@ CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 function _readDocument(payload, data, filter, db) {
 	var schema = this;
 
-	//console.log("XXXXX", filter);
+	console.log("XXXXX", filter);
 	return new Promise(function (resolve, reject) {
 		var pkid = filter,
 			bucket = new GridFSBucket(db, {
@@ -108,7 +108,7 @@ CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
 function _readDocumentMeta(payload, data, filter, db) {
 	try {
-		//("_readDocumentMeta", payload, filter);
+		console.log("_readDocumentMeta",  payload, typeof(data), filter, typeof(db));
 
 		var schema = this,
 			colName = schema.collectionName + ".files",
@@ -145,39 +145,48 @@ CRUD[CRUD_OPERATIONS.READMETA] = _readDocumentMeta;
 
 function _insertDocument(payload, req, filter, db) {
 	var schema = this;
+
 	//console.log("Test", data);
 	//console.log("_insertDocument", schema.primaryKey, data[schema.primaryKey], schema.fileNameProperty, data[schema.fileNameProperty]);
 	return new Promise(function (resolve, reject) {
-		var data = _resolveData(req),
-			d = JSON.stringify(data),
-			bucket = new GridFSBucket(db, {
-				bucketName: schema.collectionName
-			}); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
+		try{
+			var data = _resolveData(req),
+				d = JSON.stringify(data),
+				bucket = new GridFSBucket(db, {
+					bucketName: schema.collectionName
+				}); // data.ChangeID, "f" + data.ChangeID + ".json", "w", payload
 
-			console.log(data[schema.primaryKey]);
-		var uploadStream = bucket.openUploadStreamWithId(data[schema.primaryKey], data[schema.fileNameProperty] + ".json", payload);
+			//console.log("XXXXXXX", data[schema.primaryKey], payload);
 
-		uploadStream.once("finish", function (err) {
-			db.close();
-			resolve();
-		});
+			var uploadStream = bucket.openUploadStreamWithId(data[schema.primaryKey], data[schema.fileNameProperty] + ".json", payload);
+
+			uploadStream.once("finish", function (err) {
+				db.close();
+				resolve();
+			});
 
 
-		uploadStream.once("error", function (err) {
-			db.close();
+			uploadStream.once("error", function (err) {
+				db.close();
+				console.error(err);
+				reject(err);
+			});
+
+			uploadStream.write(d, function (err) {
+				if (err) {
+					console.error(err);
+				} else {
+					console.log("working in write");
+				}
+			});
+
+			uploadStream.end();
+		} catch(err) {
 			console.error(err);
 			reject(err);
-		});
+		}
 
-		uploadStream.write(d, function (err) {
-			if (err) {
-				console.error(err);
-			} else {
-				console.log("working in write");
-			}
-		});
 
-		uploadStream.end();
 
 	});
 
@@ -246,14 +255,13 @@ function MongoConnection(schema, type, data, filter) {
 				"contentType": "application/json",
 				"metadata": {}
 			},
-			data = _resolveData(req);
+			tmpdata = _resolveData(data);
 
-
-			if (data && schema.metadata) {
+			if (tmpdata && schema.metadata) {
 				//console.info("Resolving GridStore", collectionName);
 				for (var i = 0; i < schema.metadata.length; i++) {
 					var colName = schema.metadata[i],
-						datum = data[colName];
+						datum = tmpdata[colName];
 
 					if (datum) payload.metadata[colName] = datum;
 				}
