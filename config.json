@@ -6,13 +6,13 @@
 		"agent": false
 	},
 	"cors": {
-		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080", "http://efr2-test.noinfopath.net"]
+		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080"]
 	},
 	"auth0": {
 		"secret": "NTE1Njg2NDFGQTg5MzY1RDhDMjQ5REREQjU1RTE3QUE",
 		"audience": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x"
 	},
-	"mongoDbUrl": "mongodb://img-sqlserv2.img.local:27017",
+	"mongoDbUrl": "mongodb://localhost:27017",
 	"logging": {
 		"name": "RESTAPI",
 		"logLevels": {

@@ -90,8 +90,8 @@ CRUD[CRUD_OPERATIONS.COUNT] = _countDocuments;
 function _readDocument(payload, data, filter, db) {
 	var schema = this;
 
-	console.log("XXXXX", filter);
 	return new Promise(function (resolve, reject) {
+		//console.log("XXXXX", filter);
 		var pkid = filter,
 			bucket = new GridFSBucket(db, {
 				bucketName: schema.collectionName
@@ -114,12 +114,13 @@ function _readDocumentMeta(payload, data, filter, db) {
 			colName = schema.collectionName + ".files",
 			collection = db.collection(colName);
 
-
 		return collection.find(filter.query, filter.fields, filter.options).toArray()
 			.then(function (data) {
-				var retval = {};
-				retval.value = data;
+
 				if (filter.getTotal) {
+					var retval = {};
+					retval.value = data;
+
 					return _countDocuments(collection, data, filter)
 						.then(function (total) {
 							retval["odata.metadata"] = true;
@@ -134,9 +135,14 @@ function _readDocumentMeta(payload, data, filter, db) {
 			})
 			.catch(function (err) {
 				console.error("CRUD_OPERATIONS.READ", err);
+			})
+			.then(function(data){
+				db.close();
+				return data;
 			});
 	} catch (err) {
 		console.error(err);
+		db.close();
 	}
 
 }
@@ -182,6 +188,7 @@ function _insertDocument(payload, req, filter, db) {
 
 			uploadStream.end();
 		} catch(err) {
+			db.close();
 			console.error(err);
 			reject(err);
 		}
@@ -239,7 +246,7 @@ function MongoConnection(schema, type, data, filter) {
 	function executeTransaction(type, data, filter, payload) {
 		//console.log(arguments);
 
-		console.log("xxxxxxxxx executeTransaction on Grid Store", type, payload);
+		//console.log("xxxxxxxxx executeTransaction on Grid Store", type, payload);
 
 		return CRUD[type].call(this, payload, data, filter, _db);
 	}

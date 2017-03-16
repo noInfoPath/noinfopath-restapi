@@ -65,6 +65,7 @@ function _get(crud, schema, req, res, next) {
 
 			if (results.length || results["odata.metadata"]) {
 				res.send(200, results);
+				next();
 			} else if (results.pipe) {
 				res.setHeader('content-type', 'application/json');
 				results.pipe(res).on('finish', function () {
@@ -83,12 +84,12 @@ function _get(crud, schema, req, res, next) {
 }
 
 function _getMeta(crud, schema, req, res, next) {
-	
+
 	crud.execute(schema, crud.operations.READMETA, null, req.odata)
 		.then(function (results) {
-
 			if (results.length || results["odata.metadata"]) {
 				res.send(200, results);
+				next();
 			} else if (results.pipe) {
 				res.setHeader('content-type', 'application/json');
 
@@ -177,6 +178,7 @@ function _getOneMeta(crud, schema, req, res, next) {
 					next();
 				}).on("error", function (err) {
 					_error("GET", res, err, next);
+					next();
 				});
 			} else if (results.length) {
 				res.send(200, results[0]);
@@ -218,7 +220,7 @@ function _post(crud, schema, req, res, next) {
 	//console.log("POST", req.headers);
 	if (!!req.body[schema.primaryKey]) req.body._id = req.body[schema.primaryKey];
 
-	
+
 
 	crud.execute(schema, crud.operations.CREATE, data)
 		.then(function (results) {
@@ -227,7 +229,8 @@ function _post(crud, schema, req, res, next) {
 			res.statusCode = 200;
 			res.end(results);
 			//			res.send(200, results);
-			console.log("post was successful");
+			//console.log("post was successful");
+			next();
 		})
 		.catch(_error.bind(null, "POST", res, next));
 
