@@ -1,4 +1,15 @@
-{
-	"accessKeyId": "AKIAJT46Q2ITDH2RRLDA",
-	"secretAccessKey": "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"
-}
+[
+	{
+		"accessKeyId": "AKIAJT46Q2ITDH2RRLDA",
+		"secretAccessKey": "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"
+	},
+	{
+		"accessKeyId": "AKIAJHENEY5ZTXPWC6SA",
+		"secretAccessKey": "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"
+	},
+	{
+		"accessKeyId": "AKIAJGIHAVMHJ5PMNZLQ",
+		"secretAccessKey": "+q25kfz2OImpjth1j4dcK81KuR1xau5VKGZ5EvAcc"
+	}
+
+]
