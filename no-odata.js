@@ -26,7 +26,6 @@ var odataV4 = require("odata-v4-mongodb"),
 module.exports = function () {
 	return function (req, res, next) {
 		try {
-
 			var query = req.query,
 				mongoq = {
 					query: {},
@@ -72,6 +71,7 @@ module.exports = function () {
 			}
 			req.odata = mongoq;
 
+			
 			next();
 		} catch (err) {
 			next(err);

@@ -15,17 +15,13 @@
 	"folderName": "rm-efr2-test/",
 	"fileNameProperty": "FileID",
 	"contentType": "application/json",
-	"primaryKey": "FileID",
-	"metadata": [
-		"CreatedBy",
-		"DateCreated",
-		"FileID",
-		"ModifiedBy",
-		"ModifiedDate",
-		"name",
-		"size",
-		"type"
-	]
+	"primaryKey": "",
+	"metadata": []
+},{
+	"storageType": "awss3-passthru",
+	"uri": "aws/bucket",
+	"bucketName": "file-cache.noinfopath.net",
+	"folderName": "rm-efr2-test/"
 },
 {
 	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",

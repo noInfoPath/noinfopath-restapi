@@ -5,7 +5,7 @@
  *
  *	NoInfoPath REST API (noinfopath-restapi)
  *	===================
- *	*@version 2.0.20*
+ *	*@version 2.0.21*
  *
  *	Copyright (c) 2017 The NoInfoPath Group, LLC.
  *
@@ -94,7 +94,7 @@ function optionsRoute(req, res, next) {
 
 
 function startHTTPS() {
-	if(config.server.port !== 443) {
+	if (config.server.port !== 443) {
 		startHTTP();
 		return;
 	}
@@ -163,7 +163,38 @@ function startHTTP() {
 
 	server.use(restify.queryParser());
 
-	server.use(restify.bodyParser());
+	server.use(restify.bodyParser({
+		maxBodySize: 0,
+		mapParams: true,
+		mapFiles: false,
+		overrideParams: false,
+		multipartHandler: function (part, req) {
+			req.mydata = req.mydata ? req.mydata : {};
+			part.on('data', function (data) {
+				/* do something with the multipart data */
+				req.mydata[part.name] = data.toString();
+
+			});
+		},
+		multipartFileHandler: function (part, req) {
+			req.mydata = req.mydata ? req.mydata : {};
+
+			if(!req.mydata[part.name]) req.mydata[part.name] = [];
+
+			part.on('data', function (data) {
+				req.mydata[part.name].push(data);
+			});
+
+			part.on('end', function () {
+
+				req.mydata[part.name] = Buffer.concat(req.mydata[part.name]);
+				console.log(part);
+			});
+		},
+		keepExtensions: false,
+		multiples: true,
+		hash: 'sha1'
+	}));
 
 	server.use(odataParser());
 
@@ -186,7 +217,7 @@ function startHTTP() {
 }
 
 
-console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.20");
+console.log("Starting NoInfoPath RESTAPI (RESTAPI) @version 2.0.21");
 console.log("Copyright (c) 2017 The NoInfoPath Group, LLC.");
 console.log("Licensed under the MIT License. (MIT)");
 console.log("");

@@ -12,7 +12,8 @@ var mongodb = require("mongodb"),
 	storageTypes = {
 		"mgfsb": "./no-mongo-crud-lo",
 		"gcs": "./no-gcs-crud",
-		"awss3": "./no-awss3-crud"
+		"awss3": "./no-awss3-crud",
+		"awss3-passthru": "./no-awss3-passthru-crud"
 	},
 	base64url = require("base64url");
 
@@ -33,9 +34,10 @@ function _error(op, res, next, err) {
 
 	var m = err ?  err.message || err : {statusCode: 500, code: "Unknown error occured"};
 
-	//console.log(m.code);
+	console.log(err);
 
 	res.statusMessage = m.code || m.code === 404 ? m.message : m;
+	//console.log(res.statusMessage);
 	res.statusCode =  m.statusCode || m.code || 500;
 	res.end();
 	if(next) next();
@@ -483,6 +485,8 @@ function _getChanges(crud, schema, req, res, next) {
 	// 	res.send(200, results);
 
 }
+
+
 
 function _configRoute(server, crudProvider, schema) {
 	var secret = base64url.decode(config.auth0.secret),
