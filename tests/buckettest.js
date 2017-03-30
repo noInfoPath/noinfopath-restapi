@@ -37,7 +37,7 @@ MongoClient.connect('mongodb://gitlab.imginconline.com:27017/efr2_dtc', function
 	var writeStream = fs.createWriteStream('./testDownload.json');
 
 	downloadStream.pipe(writeStream).on("finish", function() {
-		console.log("Finished writing the file");
+		//console.log("Finished writing the file");
 	});
 
 

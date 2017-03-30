@@ -34,7 +34,7 @@ function _error(op, res, next, err) {
 
 	var m = err ?  err.message || err : {statusCode: 500, code: "Unknown error occured"};
 
-	console.log(err);
+	console.error(err);
 
 	res.statusMessage = m.code || m.code === 404 ? m.message : m;
 	//console.log(res.statusMessage);
@@ -166,7 +166,7 @@ function _getOne(crud, schema, req, res, next) {
 }
 
 function _getOneMeta(crud, schema, req, res, next) {
-	console.log("_getOneMeta");
+	//console.log("_getOneMeta");
 	crud.execute(schema, crud.operations.READMETA, null, req.params.id)
 		.then(function (results) {
 			if (!!results.pipe) { //checks if results is a stream
@@ -195,7 +195,7 @@ function _getOneMeta(crud, schema, req, res, next) {
 }
 
 function _putByPrimaryKey(crud, schema, req, res, next) {
-	console.log("_putByPrimaryKey", crud.type, "isBucketStorage", _isBucketStorage(schema.storageType));
+	//console.log("_putByPrimaryKey", crud.type, "isBucketStorage", _isBucketStorage(schema.storageType));
 	var routeID = req.params.id,
 		filter = {},
 		data = _resolveBodyData(req);
@@ -218,7 +218,7 @@ function _post(crud, schema, req, res, next) {
 
 	var data = _isBucketStorage(schema.storageType) ? req : req.body;
 	//console.log(req.body);
-	console.log("POST", req.url, "crud.type", crud.type);
+	//console.log("POST", req.url, "crud.type", crud.type);
 	//console.log("POST", req.headers);
 	if (!!req.body[schema.primaryKey]) req.body._id = req.body[schema.primaryKey];
 

@@ -80,14 +80,14 @@ function corsHandler(req, res, next) {
 	res.setHeader('Access-Control-Allow-Credentials', 'true');
 	res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
 	res.setHeader('Access-Control-Allow-Headers', 'Origin, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-Response-Time, X-PINGOTHER, X-CSRF-Token,Authorization');
-	res.setHeader('Access-Control-Allow-Methods', '*');
+	res.setHeader('Access-Control-Allow-Methods', ['GET', 'PUT', 'DELETE', 'POST', 'OPTIONS']);
 	res.setHeader('Access-Control-Expose-Headers', 'X-Api-Version, X-Request-Id, X-Response-Time');
 	res.setHeader('Access-Control-Max-Age', '1000');
 	return next();
 }
 
 function optionsRoute(req, res, next) {
-	console.warn("optionsRoute TODO: Make this more secure.");
+	//console.warn("optionsRoute TODO: Make this more secure.");
 	res.send(204);
 	return next();
 }
@@ -107,7 +107,7 @@ function startHTTPS() {
 		server = restify.createServer(sslOptions);
 
 	server.pre(function (request, response, next) {
-		console.info("Start: ", request.method, request.url); // (1)
+		console.info(request.method, request.url); // (1)
 		return next();
 	});
 	//console.log(config.cors);
@@ -139,7 +139,7 @@ function startHTTPS() {
 	});
 
 	server.on("after", function (request, response, route, error) {
-		console.log("End: ", route.spec.method, request.url, error || "");
+		console.log(response.statusCode, route.spec.method, request.url, error || "");
 	});
 }
 
@@ -148,7 +148,7 @@ function startHTTP() {
 	var server = restify.createServer();
 
 	server.pre(function (request, response, next) {
-		console.info("Start: ", request.method, request.url); // (1)
+		console.info(request.method, request.url); // (1)
 		return next();
 	});
 	//console.log(config.cors);
@@ -188,7 +188,7 @@ function startHTTP() {
 			part.on('end', function () {
 
 				req.mydata[part.name] = Buffer.concat(req.mydata[part.name]);
-				console.log(part);
+				//console.log(part);
 			});
 		},
 		keepExtensions: false,
@@ -202,17 +202,17 @@ function startHTTP() {
 
 	server.opts('/\.*/', corsHandler, optionsRoute);
 
-	console.log(config.server);
+	//console.log(config.server);
 	server.listen(config.server.port, config.server.address, function () {
 		console.log('%s listening at %s', server.name, server.url);
 	});
 
 	server.on("error", function (error) {
-		console.log(error);
+		console.error(error);
 	});
 
 	server.on("after", function (request, response, route, error) {
-		console.log("End: ", route.spec.method, request.url, error || "");
+		console.log(response.statusCode, route.spec.method, request.url, error || "");
 	});
 }
 

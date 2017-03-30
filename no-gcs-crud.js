@@ -180,15 +180,12 @@ function _deleteDocument(payload, data, filter, db) {
 	var schema = this;
 	//remember to close
 
-	console.log("_deleteDocument", filter);
+	//console.log("_deleteDocument", filter);
 	var bucket = gcs.bucket(schema.bucketName),
 		path = schema.folderName + filter,
 		file = bucket.file(path);
 
-	return file.delete()
-		.then(function () {
-			console.log("delete successful");
-		});
+	return file.delete();
 
 }
 CRUD[CRUD_OPERATIONS.DELETE] = _deleteDocument;

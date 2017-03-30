@@ -111,7 +111,7 @@ CRUD[CRUD_OPERATIONS.READ] = _readDocument;
 
 function _readDocumentMeta(payload, data, filter, db) {
 	try {
-		console.log("_readDocumentMeta",  payload, typeof(data), filter, typeof(db));
+		//console.log("_readDocumentMeta",  payload, typeof(data), filter, typeof(db));
 
 		var schema = this,
 			colName = schema.collectionName + ".files",
@@ -184,8 +184,6 @@ function _insertDocument(payload, req, filter, db) {
 			uploadStream.write(d, function (err) {
 				if (err) {
 					console.error(err);
-				} else {
-					console.log("working in write");
 				}
 			});
 
@@ -208,11 +206,9 @@ function _updateDocument(payload, req, filter, db){
 		collection = db.collection(schema.collectionName + ".files"),
 		data =  _resolveData(req);
 
-	console.log("_updateDocument", filter);
-
 	return collection.update(filter, data)
 		.then(function(data){
-			console.log("_updateDocument::result", data.result);
+			//console.log("_updateDocument::result", data.result);
 			return data;
 		})
 		.catch(function(err){

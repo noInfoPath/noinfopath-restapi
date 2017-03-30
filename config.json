@@ -6,7 +6,7 @@
 		"agent": false
 	},
 	"cors": {
-		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080"]
+		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080", "http://macbook:3333"]
 	},
 	"auth0": {
 		"secret": "NTE1Njg2NDFGQTg5MzY1RDhDMjQ5REREQjU1RTE3QUE",

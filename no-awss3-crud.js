@@ -208,7 +208,7 @@ function _insertDocument(payload, req, filter) {
 				if (!!err) {
 					reject(err);
 				} else {
-					console.log(data);
+					//console.log(data);
 					resolve();
 				}
 			});
@@ -245,7 +245,7 @@ function _deleteDocument(payload, data, filter, db) {
 				if (!!err) {
 					reject(err);
 				} else {
-					console.log(data);
+					//console.log(data);
 					resolve();
 				}
 			});
@@ -263,7 +263,7 @@ function S3Connection(schema, type, data, filter) {
 
 	function executeTransaction(type, data, filter, payload) {
 		//console.log(arguments);
-		console.log("executeTransaction", type);
+		//console.log("executeTransaction", type);
 
 		return CRUD[type].call(this, payload, data, filter);
 	}
