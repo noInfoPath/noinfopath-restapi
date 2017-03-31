@@ -139,16 +139,26 @@ function _readDocument(payload, req, filter) {
 			params.Bucket = schema.bucketName;
 			params.Key = path;
 
-
-
-			s3.headObject(params, function(err, data){
+			var r = s3.headObject(params, function(err, data){
 				if(err) {
 					reject(err);
 				} else {
 					file = s3.getObject(params);
+
+					file.on("build", function(){
+						file.httpRequest.headers.Expect = '100-continue';
+					});
+
 					resolve({stream: file.createReadStream(), metadata: data});
 				}
 			});
+
+			r.on("build", function(){
+				r.httpRequest.headers.Expect = '100-continue';
+			});
+
+
+
 
 		} catch (err) {
 			reject(err);
