@@ -144,18 +144,11 @@ function _readDocument(payload, req, filter) {
 					reject(err);
 				} else {
 					file = s3.getObject(params);
-
-					file.on("build", function(){
-						file.httpRequest.headers.Expect = '100-continue';
-					});
-
-					resolve({stream: file.createReadStream(), metadata: data});
+					s3.addExpect100Continue(file);
+					resolve({file: file, stream: file.createReadStream(), metadata: data});
 				}
 			});
 
-			r.on("build", function(){
-				r.httpRequest.headers.Expect = '100-continue';
-			});
 
 
 

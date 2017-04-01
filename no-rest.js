@@ -34,7 +34,7 @@ function _error(op, res, next, err) {
 
 	var m = err ?  err.message || err : {statusCode: 500, code: "Unknown error occured"};
 
-	console.error(err);
+	console.error(err, res.headers());
 
 	res.statusMessage = m.code || m.code === 404 ? m.message : m;
 	//console.log(res.statusMessage);
@@ -111,6 +111,8 @@ function _getMeta(crud, schema, req, res, next) {
 }
 
 function _getOne(crud, schema, req, res, next) {
+
+
 	crud.execute(schema, crud.operations.READ, null, req.params.id)
 		.then(function (results) {
 
@@ -127,6 +129,7 @@ function _getOne(crud, schema, req, res, next) {
 				}
 
 				if (!!stream) { //checks if results is a stream
+
 					res.setHeader('content-type', contentType);
 
 					stream.pipe(res).on('finish', function () {
@@ -486,7 +489,11 @@ function _getChanges(crud, schema, req, res, next) {
 
 }
 
-
+function _cors(req, res, next){
+	res.setHeader('Access-Control-Allow-Credentials', 'true');
+	res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+	next();
+}
 
 function _configRoute(server, crudProvider, schema) {
 	var secret = base64url.decode(config.auth0.secret),
@@ -502,26 +509,26 @@ function _configRoute(server, crudProvider, schema) {
 	console.log("Configuring route ", schema.uri, "as Storage Type", storageType || "Mongo Collection");
 	if(storageType) {
 		if(schema.odata) {
-			server.get(schema.uri + "-metadata", jwtCheck, _getMeta.bind(null, crudProv, schema));
+			server.get(schema.uri + "-metadata", jwtCheck, _cors, _getMeta.bind(null, crudProv, schema));
 //			server.get(schema.uri + "-metadata/:id", jwtCheck, _getMeta.bind(null, crudProv, schema));
 		} else {
-			server.get(schema.uri + "-metadata/:id", jwtCheck, _getOneMeta.bind(null, crudProv, schema));
+			server.get(schema.uri + "-metadata/:id", jwtCheck, _cors,  _getOneMeta.bind(null, crudProv, schema));
 		}
 
 		if(schema.storageType === "mgfsb") {
-			server.put(schema.uri + "-metadata/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
-			server.patch(schema.uri + "-metadata/:id", jwtCheck, _putByPrimaryKey.bind(null, crudProv, schema));
+			server.put(schema.uri + "-metadata/:id", jwtCheck, _cors, _putByPrimaryKey.bind(null, crudProv, schema));
+			server.patch(schema.uri + "-metadata/:id", jwtCheck, _cors, _putByPrimaryKey.bind(null, crudProv, schema));
 		}
 
 	} else {
-		server.get(schema.uri, jwtCheck, _get.bind(null, crudProv, schema));
+		server.get(schema.uri, jwtCheck, _cors, _get.bind(null, crudProv, schema));
 	}
-	server.get(schema.uri + "/:id", jwtCheck, _getOne.bind(null, crudProv, schema));
-	server.del(schema.uri + "/:id", jwtCheck, _delete.bind(null, crudProv, schema));
-	server.post(schema.uri, jwtCheck, _post.bind(null, crudProv, schema));
+	server.get(schema.uri + "/:id", jwtCheck, _cors, _getOne.bind(null, crudProv, schema));
+	server.del(schema.uri + "/:id", jwtCheck, _cors, _delete.bind(null, crudProv, schema));
+	server.post(schema.uri, jwtCheck, _cors, _post.bind(null, crudProv, schema));
 
-	if (schema.versionUri) server.get(schema.versionUri, jwtCheck, _checkVersion.bind(null, crudProvider, schema));
-	if (schema.changesUri) server.get(schema.changesUri + "/:version", jwtCheck, _getChanges.bind(null, crudProvider, schema));
+	if (schema.versionUri) server.get(schema.versionUri, jwtCheck, _cors,  _checkVersion.bind(null, crudProvider, schema));
+	if (schema.changesUri) server.get(schema.changesUri + "/:version", jwtCheck, _cors, _getChanges.bind(null, crudProvider, schema));
 }
 
 module.exports = function (server, crudProvider, schemas) {
