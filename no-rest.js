@@ -490,8 +490,10 @@ function _getChanges(crud, schema, req, res, next) {
 }
 
 function _cors(req, res, next){
-	res.setHeader('Access-Control-Allow-Credentials', 'true');
-	res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+	if(req.headers.origin) {
+		res.setHeader('Access-Control-Allow-Credentials', 'true');
+		res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+	}
 	next();
 }
 
