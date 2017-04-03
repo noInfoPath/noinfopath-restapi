@@ -111,27 +111,27 @@ module.exports = function (grunt) {
 				src: ["no-schemas/*.json.tmpl"],
 				options: {
 					values: {
-						"NIP_MONGO_HOST": "mongodb://noinfopath-mongodb:27017",
-						"NIP_AUTH_PROTOCOL": "https://",
-						"NIP_AUTH_HOST": "auth.noinfopath.net",
-						"NIP_AUTH_PORT": 443,
-						"NIP_RESTAPI_PROTOCOL": "https://",
-						"NIP_RESTAPI_HOST": "restapi.noinfopath.net",
-						"NIP_RESTAPI_PORT": 443,
-						"NIP_MS_WEBAPI_PROTOCOL": "https://",
-						"NIP_MS_WEBAPI_HOST": "auth.noinfopath.net",
-						"NIP_MS_WEBAPI_PORT": 443,
+						"NIP_MONGO_HOST": "mongodb://localhost:27017",
+						"NIP_AUTH_PROTOCOL": "http://",
+						"NIP_AUTH_HOST": "web-api.rm.efieldreporting.com",
+						"NIP_AUTH_PORT": 80,
+						"NIP_RESTAPI_PROTOCOL": "http://",
+						"NIP_RESTAPI_HOST": "backend.rm.efieldreporting.com",
+						"NIP_RESTAPI_PORT": 80,
+						"NIP_MS_WEBAPI_PROTOCOL": "http://",
+						"NIP_MS_WEBAPI_HOST": "web-api.rm.efieldreporting.com",
+						"NIP_MS_WEBAPI_PORT": 80,
 						"NIP_DTC_COLLECTION": "efr2_dtc",
-						"NIP_DTCS_PROTOCOL": "https://",
-						"NIP_DTCS_HOST": "dtcs.noinfopath.net",
-						"NIP_DTCS_PORT": 443,
+						"NIP_DTCS_PROTOCOL": "http://",
+						"NIP_DTCS_HOST": "backend.rm.efieldreporting.com",
+						"NIP_DTCS_PORT": 3100,
 						"NIP_BEDS_PORT": 3200,
 						"NIP_LOG_ROOT": "./logs/",
 						"JWT_SECRET": "NTE1Njg2NDFGQTg5MzY1RDhDMjQ5REREQjU1RTE3QUE",
 						"JWT_AUDIENCE": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x",
-						"CORS_WHITELIST": "[\"http://macbook:3000\", \"http://macbook:3001\", \"http://macbook:8080\"]",
-						"AWS_S3_ID": "AKIAJT46Q2ITDH2RRLDA",
-						"AWS_S3_SECRET": "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"
+						"CORS_WHITELIST": "[\"http://macbook:3000\", \"http://macbook:3001\", \"http://macbook:8080\", \"http://app.rm.efieldreporting.com\"]",
+						"AWS_S3_ID": "AKIAI7XT5VHCBFRVAY2A",
+						"AWS_S3_SECRET": "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"
 					}
 				}
 			}

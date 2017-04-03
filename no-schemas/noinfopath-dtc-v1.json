@@ -9,15 +9,6 @@
 	"odata": true
 },
 {
-	"storageType": "awss3",
-	"uri": "aws/NoInfoPath_FileUploadCache",
-	"bucketName": "file-cache.noinfopath.net",
-	"folderName": "rm-efr2-test/",
-	"fileNameProperty": "FileID",
-	"contentType": "application/json",
-	"primaryKey": "",
-	"metadata": []
-},{
 	"storageType": "awss3-passthru",
 	"uri": "aws/bucket",
 	"bucketName": "file-cache.noinfopath.net",
