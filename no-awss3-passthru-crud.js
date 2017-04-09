@@ -220,6 +220,7 @@ function _insertDocument(payload, req, filter) {
 
 			file = s3.putObject(params, function (err, data) {
 				if (!!err) {
+					console.error("_insertDocument", err);
 					reject(err.code);
 				} else {
 					//console.log(data);

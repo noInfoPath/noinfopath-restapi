@@ -53,7 +53,7 @@
 				"secretAccessKey": "P+ObTD/tTiOehXHWxqufLW8Urdi72ot3TvKFiOrB"
 			},
 			"httpOptions": {
-				"timeout": 5000
+				"timeout": 120000
 			}
 		}
 	}
