@@ -108,7 +108,7 @@ module.exports = function (grunt) {
 				}
 			},
 			prod: {
-				src: ["no-schemas/*.json.tmpl"],
+				src: ["no-schemas/*.json.tmpl", "config.json.tmpl"],
 				options: {
 					values: {
 						"NIP_MONGO_HOST": "mongodb://localhost:27017",
