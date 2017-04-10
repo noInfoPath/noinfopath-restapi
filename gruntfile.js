@@ -117,7 +117,7 @@ module.exports = function (grunt) {
 						"NIP_AUTH_PORT": 80,
 						"NIP_RESTAPI_PROTOCOL": "http://",
 						"NIP_RESTAPI_HOST": "backend.rm.efieldreporting.com",
-						"NIP_RESTAPI_PORT": 80,
+						"NIP_RESTAPI_PORT": 4000,
 						"NIP_MS_WEBAPI_PROTOCOL": "http://",
 						"NIP_MS_WEBAPI_HOST": "web-api.rm.efieldreporting.com",
 						"NIP_MS_WEBAPI_PORT": 80,
