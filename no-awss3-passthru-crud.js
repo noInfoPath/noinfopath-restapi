@@ -194,10 +194,9 @@ function _insertDocument(payload, req, filter) {
 	//console.log(req.mydata);
 	//console.log("_insertDocument", schema.primaryKey, data[schema.primaryKey], schema.largeObjectHandler.fileName, data[schema.largeObjectHandler.fileName]);
 	return new Promise(function (resolve, reject) {
-		function _url(folder, url) {
-			var fileName = url.substring(url.lastIndexOf("/")),
+		function _url(folder, file) {
+			var fileName = file.DocumentID + "." + file.ext,
 				r = folder + fileName;
-
 			return r;
 		}
 
@@ -205,7 +204,7 @@ function _insertDocument(payload, req, filter) {
 			var S3 = require('aws-sdk/clients/s3'),
 				config = require("./config"),
 				s3 = new S3(config.amazonApis.s3),
-				path = _url(schema.folderName, req.mydata.name),
+				path = _url(schema.folderName, req.mydata),
 				file, url, params = {};
 
 			params.Bucket = schema.bucketName;
