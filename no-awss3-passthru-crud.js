@@ -92,10 +92,6 @@
  */
 
 var config = require("./config"),
-	gcs = require('@google-cloud/storage')({
-		projectId: config.googleApis.gcs.projectId,
-		keyFilename: config.googleApis.gcs.keyFilename
-	}),
 	objStreamer = require('./object-streamer'),
 	CRUD = {},
 	CRUD_OPERATIONS = {
@@ -211,6 +207,7 @@ function _insertDocument(payload, req, filter) {
 			params.Key = path;
 			params.ContentType = req.mydata.type;
 
+			console.log(config.amazonApis.s3, schema, path, params);
 			//params.Metadata = payload.MetaData;
 			//console.log(req.mydata.file.toString());
 			params.Body = req.mydata.file;

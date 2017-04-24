@@ -6,7 +6,7 @@
 		"agent": false
 	},
 	"cors": {
-		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080", "http://macbook:3333"]
+		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080"]
 	},
 	"auth0": {
 		"secret": "NTE1Njg2NDFGQTg5MzY1RDhDMjQ5REREQjU1RTE3QUE",
@@ -49,8 +49,8 @@
 			"region": "us-east-1",
 			"signatureVersion": "v4",
 			"credentials": {
-				"accessKeyId": "AKIAJT46Q2ITDH2RRLDA",
-				"secretAccessKey": "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"
+				"accessKeyId": "AKIAJSUV55LNTVE7PD7Q",
+				"secretAccessKey": "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"
 			},
 			"httpOptions": {
 				"timeout": 120000

@@ -243,11 +243,12 @@ function _post(crud, schema, req, res, next) {
 }
 
 function _delete(crud, schema, req, res, next) {
+
 	crud.execute(schema, crud.operations.DELETE, null, req.params.id)
 		.then(function (results) {
 			res.send(200, results);
 		})
-		.catch(_error.bind(null, "DELETE", res))
+		.catch(_error.bind(null, "DELETE", res, next))
 		.then(function () {
 			next();
 		});

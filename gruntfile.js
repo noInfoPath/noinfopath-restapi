@@ -75,7 +75,9 @@ module.exports = function (grunt) {
 						"JWT_AUDIENCE": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x",
 						"CORS_WHITELIST": "[\"http://macbook:3000\", \"http://macbook:3001\", \"http://macbook:8080\"]",
 						"AWS_S3_ID": "AKIAJT46Q2ITDH2RRLDA",
-						"AWS_S3_SECRET": "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"
+						"AWS_S3_SECRET": "P+ObTD/tTiOehXHWxqufLW8Urdi72ot3TvKFiOrB",
+						"AWS_S3_BUCKET": "file-cache.noinfopath.net",
+						"AWS_S3_FOLDER": "rm-efr2-test/"
 					}
 				}
 			},
@@ -103,7 +105,9 @@ module.exports = function (grunt) {
 						"JWT_AUDIENCE": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x",
 						"CORS_WHITELIST": "[\"http://macbook:3000\", \"http://macbook:3001\", \"http://macbook:8080\", \"http://efr2-test.noinfopath.net\"]",
 						"AWS_S3_ID": "AKIAJT46Q2ITDH2RRLDA",
-						"AWS_S3_SECRET": "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"
+						"AWS_S3_SECRET": "P+ObTD/tTiOehXHWxqufLW8Urdi72ot3TvKFiOrB",
+						"AWS_S3_BUCKET": "file-cache.noinfopath.net",
+						"AWS_S3_FOLDER": "rm-efr2-test/"
 					}
 				}
 			},
@@ -131,7 +135,9 @@ module.exports = function (grunt) {
 						"JWT_AUDIENCE": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x",
 						"CORS_WHITELIST": "[\"http://macbook:3000\", \"http://macbook:3001\", \"http://macbook:8080\", \"http://app.rm.efieldreporting.com\"]",
 						"AWS_S3_ID": "AKIAI7XT5VHCBFRVAY2A",
-						"AWS_S3_SECRET": "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"
+						"AWS_S3_SECRET": "2bhGFYsl7uhAGZ3mwZg+yGQ0zJ0VmKl16Eg0JWxJ",
+						"AWS_S3_BUCKET": "rm-efr-data",
+						"AWS_S3_FOLDER": "rm-efr-data/NoFileCache/"
 					}
 				}
 			}
