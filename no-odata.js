@@ -71,7 +71,7 @@ module.exports = function () {
 			}
 			req.odata = mongoq;
 
-			
+			console.log(JSON.stringify(mongoq));
 			next();
 		} catch (err) {
 			next(err);

@@ -207,7 +207,7 @@ function _insertDocument(payload, req, filter) {
 			params.Key = path;
 			params.ContentType = req.mydata.type;
 
-			console.log(config.amazonApis.s3, schema, path, params);
+			//console.log(config.amazonApis.s3, schema, path, params);
 			//params.Metadata = payload.MetaData;
 			//console.log(req.mydata.file.toString());
 			params.Body = req.mydata.file;
