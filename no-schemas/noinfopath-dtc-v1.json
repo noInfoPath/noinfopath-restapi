@@ -1,6 +1,6 @@
 [{
 	"storageType": "mgfsb",
-	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://gitlab.img.local:27017/efr2_dtc",
 	"uri": "dtc/changes",
 	"collectionName": "changes",
 	"primaryKey": "ChangeID",
@@ -15,7 +15,7 @@
 	"folderName": "rm-efr2-test/"
 },
 {
-	"mongoDbUrl": "mongodb://localhost:27017/efr2_dtc",
+	"mongoDbUrl": "mongodb://gitlab.img.local:27017/efr2_dtc",
 	"uri": "dtc/log",
 	"collectionName": "logs",
 	"primaryKey": "_id"

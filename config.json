@@ -1,18 +1,18 @@
 {
 	"server": {
 		"address": "0.0.0.0",
-		"port": 4000,
+		"port": 4002,
 		"version": "*",
 		"agent": false
 	},
 	"cors": {
-		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080", "http://app.efr2.rm.local:8080"]
+		"whitelist": ["http://macbook:3000", "http://macbook:3001", "http://macbook:8080"]
 	},
 	"auth0": {
 		"secret": "NTE1Njg2NDFGQTg5MzY1RDhDMjQ5REREQjU1RTE3QUE",
 		"audience": "vO6mYRIAldyw7GP6FUW0WgvU32pFYD6x"
 	},
-	"mongoDbUrl": "mongodb://localhost:27017",
+	"mongoDbUrl": "mongodb://gitlab.img.local:27017",
 	"logging": {
 		"name": "RESTAPI",
 		"logLevels": {
